@@ -21,6 +21,13 @@ public class GaussianNoiseGenerator
         double z0 = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Cos(2.0 * Math.PI * u2); 
         return mean + z0 * Math.Sqrt(variance);
     }
+
+    // Method to generate uniform noise
+    public double NextUniform(double min, double max)
+    {
+        return min + (random.NextDouble() * (max - min));
+    }
+    
 }
 
 

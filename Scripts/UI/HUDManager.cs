@@ -1,5 +1,5 @@
 /* 
-Copyright 2023 Autonoma, Inc.
+Copyright 2024 Purdue AI Racing
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -36,9 +36,32 @@ public class HUDManager : MonoBehaviour
     public int FLTemp, FRTemp, RLTemp, RRTemp;
     public LapTimer lapTimer;
     
+    public TMP_InputField throttleMean;
+    public TMP_InputField throttleVariance;
+    public TMP_InputField brakeMean;
+    public TMP_InputField brakeVariance;
+    public TMP_InputField steerMean;
+    public TMP_InputField steerVariance;
+
+
     void Start()
     {
         resetButton.onClick.AddListener( resetButtonPressed  );
+
+        steerMean.text = carController.steerNoiseGenerator.mean.ToString();
+        steerVariance.text = carController.steerNoiseGenerator.variance.ToString();
+        throttleMean.text = carController.throttleNoiseGenerator.mean.ToString();
+        throttleVariance.text = carController.throttleNoiseGenerator.variance.ToString();
+        brakeMean.text = carController.brakeNoiseGenerator.mean.ToString();
+        brakeVariance.text = carController.brakeNoiseGenerator.variance.ToString();
+
+        steerMean.onEndEdit.AddListener(delegate { steerMeanChanged(steerMean); } );
+        steerVariance.onEndEdit.AddListener(delegate { steerVarianceChanged(steerVariance); } );
+        brakeMean.onEndEdit.AddListener(delegate { brakeMeanChanged(brakeMean); } );
+        brakeVariance.onEndEdit.AddListener(delegate { brakeVarianceChanged(brakeVariance); } );
+        throttleMean.onEndEdit.AddListener(delegate { throttleMeanChanged(throttleMean); } );
+        throttleVariance.onEndEdit.AddListener(delegate { throttleVarianceChanged(throttleVariance); } );
+
     }
     
     void resetButtonPressed()
@@ -88,15 +111,9 @@ public class HUDManager : MonoBehaviour
         wheelText.text =  ((int)(carController.steerAngleApplied*carController.vehicleParams.steeringRatio)).ToString();
 
         gearText.text = carController.gear.ToString();
-        // brakeBar.fillAmount = carController.brakeCmd/carController.vehicleParams.maxBrakeKpa;
-        // throttleBar.fillAmount = carController.throttleCmd;
+
         brakeBar.fillAmount = carController.brakeApplied/100.0f;
         throttleBar.fillAmount = carController.thrApplied;
-
-        // Debug.Log("Brake Applied: " + carController.brakeApplied);
-        // Debug.Log("Throttle Applied: " + carController.thrApplied); //not printing 0 but is this the same as throttle cmd?
-        // Debug.Log("Throttle Cmd: "+ carController.throttleCmd); //printing 0 
-        // Debug.Log("Throttle Bar Filling: "+ throttleBar.fillAmount ); //printing 0
 
         tachBar.fillAmount = hudRpm/7500;
         if (hudRpm > 6500 && hudRpm < 7000)
@@ -144,4 +161,84 @@ public class HUDManager : MonoBehaviour
         TTempText.text = carController.vehicleParams.tTrack.ToString()+" C";
         ATempText.text = carController.vehicleParams.tAmb.ToString()+" C";
     }   
+
+    private void steerMeanChanged(TMP_InputField input)
+    {
+        if (float.TryParse(input.text, out float value))
+        {
+            carController.steerNoiseGenerator.mean = value;
+            Debug.Log(value);
+        }
+        else
+        {
+            Debug.LogError("Failed to Parse value: " + input.text);
+        }
+
+    }
+    private void steerVarianceChanged(TMP_InputField input)
+    {
+        if (float.TryParse(input.text, out float value))
+        {
+            carController.steerNoiseGenerator.variance = value;
+            Debug.Log(value);
+        }
+        else
+        {
+            Debug.LogError("Failed to Parse value: " + input.text);
+        }
+
+    }
+    private void brakeMeanChanged(TMP_InputField input)
+    {
+        if (float.TryParse(input.text, out float value))
+        {
+            carController.brakeNoiseGenerator.mean = value;
+            Debug.Log(value);
+        }
+        else
+        {
+            Debug.LogError("Failed to Parse value: " + input.text);
+        }
+
+    }
+    private void brakeVarianceChanged(TMP_InputField input)
+    {
+        if (float.TryParse(input.text, out float value))
+        {
+            carController.brakeNoiseGenerator.variance = value;
+            Debug.Log(value);
+        }
+        else
+        {
+            Debug.LogError("Failed to Parse value: " + input.text);
+        }
+
+    }
+    private void throttleMeanChanged(TMP_InputField input)
+    {
+        if (float.TryParse(input.text, out float value))
+        {
+            carController.throttleNoiseGenerator.mean = value;
+            Debug.Log(value);
+        }
+        else
+        {
+            Debug.LogError("Failed to Parse value: " + input.text);
+        }
+
+    }
+    private void throttleVarianceChanged(TMP_InputField input)
+    {
+        if (float.TryParse(input.text, out float value))
+        {
+            carController.throttleNoiseGenerator.variance = value;
+            Debug.Log(value);
+        }
+        else
+        {
+            Debug.LogError("Failed to Parse value: " + input.text);
+        }
+
+    }
+
 }

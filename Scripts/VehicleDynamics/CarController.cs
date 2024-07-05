@@ -1,5 +1,5 @@
 /* 
-Copyright 2023 Autonoma, Inc.
+Copyright 2024 Purdue AI Racing
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -40,9 +40,10 @@ public class CarController : MonoBehaviour
     public bool physicalActuator = false;
     public VehicleState vehicleState;
     public Powertrain powertrain;
-    private GaussianNoiseGenerator steerNoiseGenerator;
-    private GaussianNoiseGenerator brakeNoiseGenerator;
-    private GaussianNoiseGenerator throttleNoiseGenerator;
+    public GaussianNoiseGenerator steerNoiseGenerator;
+    public GaussianNoiseGenerator brakeNoiseGenerator;
+    public GaussianNoiseGenerator throttleNoiseGenerator;
+    // private string dataFilePath; //for changing gaussian noise on-the-fly
     void getState()
     {
         // take values from unity system and transform into VD coords
@@ -89,6 +90,8 @@ public class CarController : MonoBehaviour
             // Add Gaussian noise
             float steerNoise = (float)steerNoiseGenerator.NextGaussian();
             steerAngleApplied += steerNoise;
+
+            // Debug.Log("Steer Noise: " + steerNoise);
 
             steerAngleAppliedPrev = steerAngleApplied;
         }
@@ -145,6 +148,8 @@ public class CarController : MonoBehaviour
         // Add Gaussian noise
         float throttleNoise = (float)throttleNoiseGenerator.NextGaussian();
         thrApplied += throttleNoise;
+
+        Debug.Log("throttle applied: " + thrApplied);
             
         thrAplliedPrev = thrApplied;
 
@@ -204,6 +209,11 @@ public class CarController : MonoBehaviour
         float throttleVariance = GameManager.Instance.Settings.mySensorSet.throttleVariance;
         int throttleSeed = GameManager.Instance.Settings.mySensorSet.throttleSeed;
         throttleNoiseGenerator = new GaussianNoiseGenerator(throttleMean, throttleVariance, throttleSeed);
+
+        // // Initialize dataFilePath
+        // string folderName = SaveDataManager.sensorSetFolderName;
+        // dataFilePath = Path.Combine(SaveDataManager.GetSavePath(), folderName, "Default IAC.dat");
+
     
     }
 

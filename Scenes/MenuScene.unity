@@ -1093,7 +1093,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 350, y: -230}
+  m_AnchoredPosition: {x: 335, y: -230}
   m_SizeDelta: {x: 500, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &176527117
@@ -1116,7 +1116,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Throttle [%]\n\u03BC, \u03C3^2, seed"
+  m_text: "Throttle [%/100]\n\u03BC, \u03C3^2, seed"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1911,7 +1911,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Brake [%]\n\u03BC, \u03C3^2, seed"
+  m_text: "Brake [%/100]\n\u03BC, \u03C3^2, seed"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -12358,9 +12358,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4397396915607570794, guid: ff764c702c7864d5dbf29725cce38132, type: 3}
       propertyPath: m_text
-      value: "<b><size=40>Black and Gold Autonomous Racing (BGAR) Simulator</size></b>\n\n*
-        Derivative of 2023 Autonoma/TierIV Racing Simulator\n\n* BGAR created code
-        and BGAR specific assets are strictly proprietary and may not be distributed
+      value: "<b><size=40>Purdue AI Racing Simulator (PAIRSIM)</size></b>\n\n* Derivative
+        of 2023 Autonoma/TierIV Racing Simulator\n\n* Purdue AI Racing (PAIR) created
+        code and PAIR specific assets are strictly proprietary and may not be distributed
         whatsoever.  \nThe following extensions are included (*.fbx *.pcd *.osm *.png
         *.anim *.unitypackage *.x86_64)\n**********************************************************************************\nIMPORTANT:
         BY INSTALLING, COPYING, DOWNLOADING, OR OTHERWISE USING THE SOFTWARE, YOU
@@ -13911,6 +13911,10 @@ PrefabInstance:
 
         This simulator is being actively
         developed by Purdue AI Racing (formerly Black and Gold Autonomous Racing).
+
+
+        Please
+        email ye372@purdue.edu with any questions or concerns.
 
 '
       objectReference: {fileID: 0}
