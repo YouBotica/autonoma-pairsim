@@ -2066,9 +2066,6 @@ MonoBehaviour:
   imuVelLocal: {x: 0, y: 0, z: 0}
   imuVelLocalPrev: {x: 0, y: 0, z: 0}
   rb: {fileID: 355629541803049267}
-  imuMean: 0
-  imuVariance: 0
-  imuSeed: 0
 --- !u!114 &7971734390841681366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2888,9 +2885,6 @@ MonoBehaviour:
   imuVelLocal: {x: 0, y: 0, z: 0}
   imuVelLocalPrev: {x: 0, y: 0, z: 0}
   rb: {fileID: 0}
-  imuMean: 0
-  imuVariance: 0
-  imuSeed: 0
 --- !u!1 &2850625635776890099
 GameObject:
   m_ObjectHideFlags: 0
@@ -6284,9 +6278,6 @@ MonoBehaviour:
   imuVelLocal: {x: 0, y: 0, z: 0}
   imuVelLocalPrev: {x: 0, y: 0, z: 0}
   rb: {fileID: 355629541803049267}
-  imuMean: 0
-  imuVariance: 0
-  imuSeed: 0
 --- !u!1 &6353026785928130186
 GameObject:
   m_ObjectHideFlags: 0
@@ -7306,9 +7297,6 @@ MonoBehaviour:
   imuVelLocal: {x: 0, y: 0, z: 0}
   imuVelLocalPrev: {x: 0, y: 0, z: 0}
   rb: {fileID: 355629541803049267}
-  imuMean: 0
-  imuVariance: 0
-  imuSeed: 0
 --- !u!1 &7491791006648617943
 GameObject:
   m_ObjectHideFlags: 0
@@ -8462,9 +8450,6 @@ MonoBehaviour:
   imuVelLocal: {x: 0, y: 0, z: 0}
   imuVelLocalPrev: {x: 0, y: 0, z: 0}
   rb: {fileID: 355629541803049267}
-  imuMean: 0
-  imuVariance: 0
-  imuSeed: 0
 --- !u!1 &8382313193651224453
 GameObject:
   m_ObjectHideFlags: 0

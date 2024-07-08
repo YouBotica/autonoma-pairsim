@@ -1,12 +1,12 @@
 using System;
 
-public class GaussianNoiseGenerator
+public class NoiseGenerator
 {
     public Random random;
     public double mean;
     public double variance;
 
-    public GaussianNoiseGenerator(double mean, double variance, int seed)
+    public NoiseGenerator(double mean, double variance, int seed)
     {
         this.mean = mean;
         this.variance = variance;

@@ -40,9 +40,9 @@ public class CarController : MonoBehaviour
     public bool physicalActuator = false;
     public VehicleState vehicleState;
     public Powertrain powertrain;
-    public GaussianNoiseGenerator steerNoiseGenerator;
-    public GaussianNoiseGenerator brakeNoiseGenerator;
-    public GaussianNoiseGenerator throttleNoiseGenerator;
+    public NoiseGenerator steerNoiseGenerator;
+    public NoiseGenerator brakeNoiseGenerator;
+    public NoiseGenerator throttleNoiseGenerator;
     // private string dataFilePath; //for changing gaussian noise on-the-fly
     void getState()
     {
@@ -148,8 +148,6 @@ public class CarController : MonoBehaviour
         // Add Gaussian noise
         float throttleNoise = (float)throttleNoiseGenerator.NextGaussian();
         thrApplied += throttleNoise;
-
-        Debug.Log("throttle applied: " + thrApplied);
             
         thrAplliedPrev = thrApplied;
 
@@ -198,22 +196,17 @@ public class CarController : MonoBehaviour
         float steerMean = GameManager.Instance.Settings.mySensorSet.steerMean;
         float steerVariance = GameManager.Instance.Settings.mySensorSet.steerVariance;
         int steerSeed = GameManager.Instance.Settings.mySensorSet.steerSeed;
-        steerNoiseGenerator = new GaussianNoiseGenerator(steerMean, steerVariance, steerSeed);
+        steerNoiseGenerator = new NoiseGenerator(steerMean, steerVariance, steerSeed);
 
         float brakeMean = GameManager.Instance.Settings.mySensorSet.brakeMean;
         float brakeVariance = GameManager.Instance.Settings.mySensorSet.brakeVariance;
         int brakeSeed = GameManager.Instance.Settings.mySensorSet.brakeSeed;
-        brakeNoiseGenerator = new GaussianNoiseGenerator(brakeMean, brakeVariance, brakeSeed);
+        brakeNoiseGenerator = new NoiseGenerator(brakeMean, brakeVariance, brakeSeed);
 
         float throttleMean = GameManager.Instance.Settings.mySensorSet.throttleMean;
         float throttleVariance = GameManager.Instance.Settings.mySensorSet.throttleVariance;
         int throttleSeed = GameManager.Instance.Settings.mySensorSet.throttleSeed;
-        throttleNoiseGenerator = new GaussianNoiseGenerator(throttleMean, throttleVariance, throttleSeed);
-
-        // // Initialize dataFilePath
-        // string folderName = SaveDataManager.sensorSetFolderName;
-        // dataFilePath = Path.Combine(SaveDataManager.GetSavePath(), folderName, "Default IAC.dat");
-
+        throttleNoiseGenerator = new NoiseGenerator(throttleMean, throttleVariance, throttleSeed);
     
     }
 

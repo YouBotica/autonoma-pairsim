@@ -149,6 +149,21 @@ public class SensorSet
     public float throttleMean;
     public float throttleVariance;
     public int throttleSeed;
+    public float posMean;
+    public float posVariance;
+    public int posSeed;
+    public float velMean;
+    public float velVariance;
+    public int velSeed;
+    public float accelMean;
+    public float accelVariance;
+    public int accelSeed;
+    public float headingMean;
+    public float headingVariance;
+    public int headingSeed;
+    public float gyroMean;
+    public float gyroVariance;
+    public int gyroSeed;
 
 
     public SensorSet()

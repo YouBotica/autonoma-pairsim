@@ -1,5 +1,5 @@
 /* 
-Copyright 2023 Autonoma, Inc.
+Copyright 2024 Purdue AI Racing
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -61,8 +61,7 @@ public class ScenarioMenuController : MonoBehaviour
 
 
     private float lat_input;
-    private float lon_input; //initializes as 0.0f
-
+    private float lon_input; 
     private float height_input;
     private float yaw_input;
 
@@ -402,7 +401,7 @@ public class ScenarioMenuController : MonoBehaviour
         {
             tmpSensorSet.Name = "Default IAC";
             tmpSensorSet.EnableTop = true;
-            Debug.Log("Loading DefaulT Sensor Setup");
+            Debug.Log("Loading Default Sensor Setup");
 
             // Novatel
             ISensor novatel = SensorFactory.CreateGnssInsSensor();
@@ -461,6 +460,22 @@ public class ScenarioMenuController : MonoBehaviour
             tmpSensorSet.throttleMean = 0f;
             tmpSensorSet.throttleVariance = 0f;
             tmpSensorSet.throttleSeed = 0;
+
+            tmpSensorSet.posMean = 0f;
+            tmpSensorSet.posVariance = 0f;
+            tmpSensorSet.posSeed = 0;
+            tmpSensorSet.velMean = 0f;
+            tmpSensorSet.velVariance = 0f;
+            tmpSensorSet.velSeed = 0;
+            tmpSensorSet.accelMean = 0f;
+            tmpSensorSet.accelVariance = 0f;
+            tmpSensorSet.accelSeed = 0;
+            tmpSensorSet.headingMean = 0f;
+            tmpSensorSet.headingVariance = 0f;
+            tmpSensorSet.headingSeed = 0;
+            tmpSensorSet.gyroMean = 0f;
+            tmpSensorSet.gyroVariance = 0f;
+            tmpSensorSet.gyroSeed = 0;
 
             saveSensorSet(tmpSensorSet);
         }

@@ -28,20 +28,35 @@ public class ImuSimulator : MonoBehaviour
     public Vector3 imuAngle; // [deg]
     public Vector3 imuVelLocal,imuVelLocalPrev;
     public Rigidbody rb;
-    public float imuMean;
-    public float imuVariance;
-    public int imuSeed;
-    // private GaussianNoiseGenerator noiseGenerator;
+    public NoiseGenerator headingNoiseGenerator;
+    public NoiseGenerator gyroNoiseGenerator;
+    public NoiseGenerator accelNoiseGenerator;
+    public NoiseGenerator velNoiseGenerator;
+
     void Start()
     {
         rb = HelperFunctions.GetParentComponent<Rigidbody>(transform);
 
+        //Gaussian Noise Simulators
+        float headingMean = GameManager.Instance.Settings.mySensorSet.headingMean;
+        float headingVariance = GameManager.Instance.Settings.mySensorSet.headingVariance;
+        int headingSeed = GameManager.Instance.Settings.mySensorSet.headingSeed;
+        headingNoiseGenerator = new NoiseGenerator(headingMean, headingVariance, headingSeed);
 
-        // imuMean = GameManager.Instance.Settings.mySensorSet.imuMean;
-        // imuVariance = GameManager.Instance.Settings.mySensorSet.imuVariance;
-        // imuSeed = GameManager.Instance.Settings.mySensorSet.imuSeed;
+        float gyroMean = GameManager.Instance.Settings.mySensorSet.gyroMean;
+        float gyroVariance = GameManager.Instance.Settings.mySensorSet.gyroVariance;
+        int gyroSeed = GameManager.Instance.Settings.mySensorSet.gyroSeed;
+        gyroNoiseGenerator = new NoiseGenerator(gyroMean, gyroVariance, gyroSeed);
 
-        // noiseGenerator = new GaussianNoiseGenerator(imuMean, imuVariance, imuSeed);
+        float velMean = GameManager.Instance.Settings.mySensorSet.velMean;
+        float velVariance = GameManager.Instance.Settings.mySensorSet.velVariance;
+        int velSeed = GameManager.Instance.Settings.mySensorSet.velSeed;
+        velNoiseGenerator = new NoiseGenerator(velMean, velVariance, velSeed);
+
+        float accelMean = GameManager.Instance.Settings.mySensorSet.accelMean;
+        float accelVariance = GameManager.Instance.Settings.mySensorSet.accelVariance;
+        int accelSeed = GameManager.Instance.Settings.mySensorSet.accelSeed;
+        accelNoiseGenerator = new NoiseGenerator(accelMean, accelVariance, accelSeed);
 
     }
     void FixedUpdate()
@@ -53,6 +68,31 @@ public class ImuSimulator : MonoBehaviour
         Vector3 dvdt = (imuVelLocal - imuVelLocalPrev)/Time.fixedDeltaTime;
         Vector3 localGravity = transform.InverseTransformDirection(Physics.gravity);
         imuAccel = dvdt - Vector3.Cross(imuVelLocal,imuGyro) - HelperFunctions.unity2vehDynCoord(localGravity); 
+
+        // Add Gaussian noise to IMU Gyro
+        float gyroNoiseX = (float)gyroNoiseGenerator.NextGaussian();
+        float gyroNoiseY = (float)gyroNoiseGenerator.NextGaussian();
+        float gyroNoiseZ = (float)gyroNoiseGenerator.NextGaussian();
+        imuGyro[0] += gyroNoiseX;
+        imuGyro[1] += gyroNoiseY;
+        imuGyro[2] += gyroNoiseZ;
+
+        // Add Gaussian noise to IMU Accel
+        float accelNoiseX = (float)accelNoiseGenerator.NextGaussian();
+        float accelNoiseY = (float)accelNoiseGenerator.NextGaussian();
+        float accelNoiseZ = (float)accelNoiseGenerator.NextGaussian();
+        imuAccel[0] += accelNoiseX;
+        imuAccel[1] += accelNoiseY;
+        imuAccel[2] += accelNoiseZ;
+
+        // Add Gaussian noise to IMU Vel
+        float velNoiseX = (float)velNoiseGenerator.NextGaussian();
+        float velNoiseY = (float)velNoiseGenerator.NextGaussian();
+        float velNoiseZ = (float)velNoiseGenerator.NextGaussian();
+        imuVelLocal[0] += velNoiseX;
+        imuVelLocal[1] += velNoiseY;
+        imuVelLocal[2] += velNoiseZ;
+
         imuVelLocalPrev = imuVelLocal;
 
         // euler angles; some sensors output it with their internal fusion algorithms.
@@ -65,18 +105,14 @@ public class ImuSimulator : MonoBehaviour
         // RPY, RHS +, [deg], NORTH = 0 for yaw, EAST = -90, [-180,180]
         imuAngle = HelperFunctions.unity2vehDynCoord(-imuAngle); 
 
-        // // Add Gaussian noise
-        // Vector3 imuGyroNoise = new Vector3((float)noiseGenerator.NextGaussian(), (float)noiseGenerator.NextGaussian(), (float)noiseGenerator.NextGaussian());
-        // Vector3 imuAccelNoise = new Vector3((float)noiseGenerator.NextGaussian(), (float)noiseGenerator.NextGaussian(), (float)noiseGenerator.NextGaussian());
-        // Vector3 imuAngleNoise = new Vector3((float)noiseGenerator.NextGaussian(), (float)noiseGenerator.NextGaussian(), (float)noiseGenerator.NextGaussian());
-
-        // Debug.Log("Gyro Noise: "+ imuGyroNoise);
-        // Debug.Log("Accel Noise: "+ imuAccelNoise);
-        // Debug.Log("Angle Noise: "+ imuAngleNoise);
-
-        // imuGyro += imuGyroNoise;
-        // imuAccel += imuAccelNoise;
-        // imuAngle += imuAngleNoise;
+        // Add Gaussian noise to IMU Angle
+        float headingNoiseX = (float)headingNoiseGenerator.NextGaussian();
+        float headingNoiseY = (float)headingNoiseGenerator.NextGaussian();
+        float headingNoiseZ = (float)headingNoiseGenerator.NextGaussian();
+        imuAngle[0] += headingNoiseX;
+        imuAngle[1] += headingNoiseY;
+        imuAngle[2] += headingNoiseZ;
+        
 
     }
 

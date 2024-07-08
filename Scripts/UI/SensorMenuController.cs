@@ -59,6 +59,26 @@ public class SensorMenuController : MonoBehaviour
     public TMP_InputField throttleMeanInput;
     public TMP_InputField throttleVarianceInput;
     public TMP_InputField throttleSeedInput;
+
+    public TMP_InputField posMeanInput;
+    public TMP_InputField posVarianceInput;
+    public TMP_InputField posSeedInput;
+
+    public TMP_InputField velMeanInput;
+    public TMP_InputField velVarianceInput;
+    public TMP_InputField velSeedInput;
+
+    public TMP_InputField accMeanInput;
+    public TMP_InputField accVarianceInput;
+    public TMP_InputField accSeedInput;
+
+    public TMP_InputField headingMeanInput;
+    public TMP_InputField headingVarianceInput;
+    public TMP_InputField headingSeedInput;
+
+    public TMP_InputField gyroMeanInput;
+    public TMP_InputField gyroVarianceInput;
+    public TMP_InputField gyroSeedInput;
     
     private void Awake() {}
 
@@ -131,6 +151,27 @@ public class SensorMenuController : MonoBehaviour
         throttleMeanInput.onEndEdit.AddListener(delegate { throttleMeanInputChanged(throttleMeanInput); } );
         throttleVarianceInput.onEndEdit.AddListener(delegate { throttleVarianceInputChanged(throttleVarianceInput); } );
         throttleSeedInput.onEndEdit.AddListener(delegate { throttleSeedInputChanged(throttleSeedInput); } );
+
+        posMeanInput.onEndEdit.AddListener(delegate { posMeanInputChanged(posMeanInput); } );
+        posVarianceInput.onEndEdit.AddListener(delegate { posVarianceInputChanged(posVarianceInput); } );
+        posSeedInput.onEndEdit.AddListener(delegate { posSeedInputChanged(posSeedInput); } );
+    
+        velMeanInput.onEndEdit.AddListener(delegate { velMeanInputChanged(velMeanInput); } );
+        velVarianceInput.onEndEdit.AddListener(delegate { velVarianceInputChanged(velVarianceInput); } );
+        velSeedInput.onEndEdit.AddListener(delegate { velSeedInputChanged(velSeedInput); } );
+
+        accMeanInput.onEndEdit.AddListener(delegate { accelMeanInputChanged(accMeanInput); } );
+        accVarianceInput.onEndEdit.AddListener(delegate { accelVarianceInputChanged(accVarianceInput); } );
+        accSeedInput.onEndEdit.AddListener(delegate { accelSeedInputChanged(accSeedInput); } );
+
+        headingMeanInput.onEndEdit.AddListener(delegate { headingMeanInputChanged(headingMeanInput); } );
+        headingVarianceInput.onEndEdit.AddListener(delegate { headingVarianceInputChanged(headingVarianceInput); } );
+        headingSeedInput.onEndEdit.AddListener(delegate { headingSeedInputChanged(headingSeedInput); } );
+
+        gyroMeanInput.onEndEdit.AddListener(delegate { gyroMeanInputChanged(gyroMeanInput); } );
+        gyroVarianceInput.onEndEdit.AddListener(delegate { gyroVarianceInputChanged(gyroVarianceInput); } );
+        gyroSeedInput.onEndEdit.AddListener(delegate { gyroSeedInputChanged(gyroSeedInput); } );
+
     }
 
     private void OnEnable() 
@@ -239,11 +280,6 @@ public class SensorMenuController : MonoBehaviour
             scenarioMenu.tmpSensorSet.steerMean = value;
             Debug.Log(value);
         }
-        else
-        {
-            Debug.LogError("Failed to Parse value: " + input.text);
-        }
-
     }
     private void steerVarianceInputChanged(TMP_InputField input)
     {
@@ -253,11 +289,6 @@ public class SensorMenuController : MonoBehaviour
             scenarioMenu.tmpSensorSet.steerVariance = value;
             Debug.Log(value);
         }
-        else
-        {
-            Debug.LogError("Failed to Parse value: " + input.text);
-        }
-
     }
     private void steerSeedInputChanged(TMP_InputField input)
     {
@@ -267,11 +298,6 @@ public class SensorMenuController : MonoBehaviour
             scenarioMenu.tmpSensorSet.steerSeed = value;
             Debug.Log(value);
         }
-        else
-        {
-            Debug.LogError("Failed to Parse value: " + input.text);
-        }
-
     }
     private void brakeMeanInputChanged(TMP_InputField input)
     {
@@ -281,11 +307,6 @@ public class SensorMenuController : MonoBehaviour
             scenarioMenu.tmpSensorSet.brakeMean = value;
             Debug.Log(value);
         }
-        else
-        {
-            Debug.LogError("Failed to Parse value: " + input.text);
-        }
-
     }
     private void brakeVarianceInputChanged(TMP_InputField input)
     {
@@ -295,11 +316,6 @@ public class SensorMenuController : MonoBehaviour
             scenarioMenu.tmpSensorSet.brakeVariance = value;
             Debug.Log(value);
         }
-        else
-        {
-            Debug.LogError("Failed to Parse value: " + input.text);
-        }
-
     }
     private void brakeSeedInputChanged(TMP_InputField input)
     {
@@ -309,11 +325,6 @@ public class SensorMenuController : MonoBehaviour
             scenarioMenu.tmpSensorSet.brakeSeed = value;
             Debug.Log(value);
         }
-        else
-        {
-            Debug.LogError("Failed to Parse value: " + input.text);
-        }
-
     }
 
     private void throttleMeanInputChanged(TMP_InputField input)
@@ -324,11 +335,6 @@ public class SensorMenuController : MonoBehaviour
             scenarioMenu.tmpSensorSet.throttleMean = value;
             Debug.Log(value);
         }
-        else
-        {
-            Debug.LogError("Failed to Parse value: " + input.text);
-        }
-
     }
     private void throttleVarianceInputChanged(TMP_InputField input)
     {
@@ -338,11 +344,6 @@ public class SensorMenuController : MonoBehaviour
             scenarioMenu.tmpSensorSet.throttleVariance = value;
             Debug.Log(value);
         }
-        else
-        {
-            Debug.LogError("Failed to Parse value: " + input.text);
-        }
-
     }
     private void throttleSeedInputChanged(TMP_InputField input)
     {
@@ -352,12 +353,143 @@ public class SensorMenuController : MonoBehaviour
             scenarioMenu.tmpSensorSet.throttleSeed = value;
             Debug.Log(value);
         }
-        else
-        {
-            Debug.LogError("Failed to Parse value: " + input.text);
-        }
-
     }
+    private void posMeanInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (float.TryParse(input.text, out float value))
+        {
+            scenarioMenu.tmpSensorSet.posMean = value;
+            Debug.Log(value);
+        }
+    }
+    private void posVarianceInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (float.TryParse(input.text, out float value))
+        {
+            scenarioMenu.tmpSensorSet.posVariance = value;
+            Debug.Log(value);
+        }
+    }
+    private void posSeedInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (int.TryParse(input.text, out int value))
+        {
+            scenarioMenu.tmpSensorSet.posSeed = value;
+            Debug.Log(value);
+        }
+    }
+    private void velMeanInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (float.TryParse(input.text, out float value))
+        {
+            scenarioMenu.tmpSensorSet.velMean = value;
+            Debug.Log(value);
+        }
+    }
+    private void velVarianceInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (float.TryParse(input.text, out float value))
+        {
+            scenarioMenu.tmpSensorSet.velVariance = value;
+            Debug.Log(value);
+        }
+    }
+    private void velSeedInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (int.TryParse(input.text, out int value))
+        {
+            scenarioMenu.tmpSensorSet.velSeed = value;
+            Debug.Log(value);
+        }
+    }
+    private void accelMeanInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (float.TryParse(input.text, out float value))
+        {
+            scenarioMenu.tmpSensorSet.accelMean = value;
+            Debug.Log(value);
+        }
+    }
+    private void accelVarianceInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (float.TryParse(input.text, out float value))
+        {
+            scenarioMenu.tmpSensorSet.accelVariance = value;
+            Debug.Log(value);
+        }
+    }
+    private void accelSeedInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (int.TryParse(input.text, out int value))
+        {
+            scenarioMenu.tmpSensorSet.accelSeed = value;
+            Debug.Log(value);
+        }
+    }
+    private void headingMeanInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (float.TryParse(input.text, out float value))
+        {
+            scenarioMenu.tmpSensorSet.headingMean = value;
+            Debug.Log(value);
+        }
+    }
+    private void headingVarianceInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (float.TryParse(input.text, out float value))
+        {
+            scenarioMenu.tmpSensorSet.headingVariance = value;
+            Debug.Log(value);
+        }
+    }
+    private void headingSeedInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (int.TryParse(input.text, out int value))
+        {
+            scenarioMenu.tmpSensorSet.headingSeed = value;
+            Debug.Log(value);
+        }
+    }
+    private void gyroMeanInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (float.TryParse(input.text, out float value))
+        {
+            scenarioMenu.tmpSensorSet.gyroMean = value;
+            Debug.Log(value);
+        }
+    }
+    private void gyroVarianceInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (float.TryParse(input.text, out float value))
+        {
+            scenarioMenu.tmpSensorSet.gyroVariance = value;
+            Debug.Log(value);
+        }
+    }
+    private void gyroSeedInputChanged(TMP_InputField input)
+    {
+        updateTmpSensorSet();
+        if (int.TryParse(input.text, out int value))
+        {
+            scenarioMenu.tmpSensorSet.gyroSeed = value;
+            Debug.Log(value);
+        }
+    }
+
 
     private void saveSensorSetButtonPressed()
     {
