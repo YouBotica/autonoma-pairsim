@@ -16,6 +16,10 @@ out of or in connection with the software or the use of the software.
 
 using UnityEngine;
 using VehicleDynamics;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System;
 
 public class CarController : MonoBehaviour
 {
@@ -207,9 +211,121 @@ public class CarController : MonoBehaviour
         float throttleVariance = GameManager.Instance.Settings.mySensorSet.throttleVariance;
         int throttleSeed = GameManager.Instance.Settings.mySensorSet.throttleSeed;
         throttleNoiseGenerator = new NoiseGenerator(throttleMean, throttleVariance, throttleSeed);
-    
+
+        string aeroConfigFileName = "AeroParams.json";
+        string fullAeroPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "PAIRSIM_config"), "Parameters/" + aeroConfigFileName);
+        CheckAndCreateDefaultFile(fullAeroPath, defaultAeroParams);
+
+        string suspensionConfigFileName = "SuspensionParams.json";
+        string fullSuspensionPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "PAIRSIM_config"), "Parameters/" + suspensionConfigFileName);
+        CheckAndCreateDefaultFile(fullSuspensionPath, defaultSuspensionParams);
+
+        LoadAeroParametersFromJson(fullAeroPath);
+        LoadSuspensionParametersFromJson(fullSuspensionPath);
+
     }
 
+    [System.Serializable]
+    public class AeroParametersConfig
+    {
+        // ------------------Aerodynamics --------------------------
+        public double Af;// = 1; // [m^2] Frontal Area
+        public double ClF;// = 0.65f; // downforce coef. at the front axle
+        public double ClR;// = 0.5f*1.6f/1.3f; // downforce coef. at the rear axle
+        public Vector3 frontDownforcePos;
+        public Vector3 rearDownforcePos;
+        public double Cd;// = 0.81f; 
+        public Vector3 dragForcePos;// = new Vector3(0f,0.2f,0f); // [m] center of pressure for the drag force, above the origin point of the chassis
+    }
+
+    [System.Serializable]
+    public class SuspensionParametersConfig
+    {
+        // --------------- Suspension -----------------------
+        public double kArbFront;
+        public double kArbRear;
+        public double kSpring;// = 200000.0f; // [N/m] carrying 800kg car with 10cm deflection
+        public double cDamper;// = 4000.0f; //8855 [Ns/m] for zeta = 0.707 = c/(2*sqrt(km))
+        public double lSpring;// = 0.3f; // [m]
+    }
+
+    private AeroParametersConfig defaultAeroParams = new AeroParametersConfig
+    {
+        Af = 1.0, // [m^2] 
+        ClF = 0.65, // downforce coef. at the front axle
+        ClR = 1.18,// // downforce coef. at the rear axle
+        frontDownforcePos = new Vector3(0.0f, 0.0f, 1.7f),
+        rearDownforcePos = new Vector3(0.0f, 0.0f, -1.3f),
+        Cd = 0.8581, 
+        dragForcePos = new Vector3(0.0f, 0.0f, 0.0f) // [m] center of pressure for the drag force, above the origin point of the chassis
+    };
+    private SuspensionParametersConfig defaultSuspensionParams = new SuspensionParametersConfig
+    {
+        kArbFront = 463593.0,
+        kArbRear = 358225.0,
+        kSpring = 200000.0, // [N/m] 
+        cDamper = 8000.0,// [Ns/m] 
+        lSpring = 0.3//[m]
+    };
+
+    void LoadAeroParametersFromJson(string filePath)
+    {
+        string fullPath = Path.Combine(Application.dataPath, filePath);
+        if (File.Exists(fullPath))
+        {
+            string jsonData = File.ReadAllText(fullPath);
+            AeroParametersConfig Params = JsonUtility.FromJson<AeroParametersConfig>(jsonData);
+            ApplyAeroParameters(Params);
+        }
+        else
+        {
+            Debug.LogError("Aerodynamic parameters file not found: " + fullPath);
+        }
+    }
+    void LoadSuspensionParametersFromJson(string filePath)
+    {
+        string fullPath = Path.Combine(Application.dataPath, filePath);
+        if (File.Exists(fullPath))
+        {
+            string jsonData = File.ReadAllText(fullPath);
+            SuspensionParametersConfig Params = JsonUtility.FromJson<SuspensionParametersConfig>(jsonData);
+            ApplySuspensionParameters(Params);
+        }
+        else
+        {
+            Debug.LogError("Aerodynamic parameters file not found: " + fullPath);
+        }
+    }
+
+    void ApplyAeroParameters(AeroParametersConfig config)
+    {
+        vehicleParams.Af = (float)config.Af;
+        vehicleParams.ClF = (float)config.ClF;
+        vehicleParams.ClR = (float)config.ClR;
+        vehicleParams.frontDownforcePos = config.frontDownforcePos;
+        vehicleParams.rearDownforcePos = config.rearDownforcePos;
+        vehicleParams.Cd = (float)config.Cd;
+        vehicleParams.dragForcePos = config.dragForcePos;
+    }
+    void ApplySuspensionParameters(SuspensionParametersConfig config)
+    {
+        vehicleParams.kArbFront = (float)config.kArbFront;
+        vehicleParams.kArbRear = (float)config.kArbRear;
+        vehicleParams.kSpring = (float)config.kSpring; 
+        vehicleParams.cDamper = (float)config.cDamper;
+        vehicleParams.lSpring = (float)config.lSpring;
+
+    }
+    //check to see if params file already exists, if not write the file
+    void CheckAndCreateDefaultFile<T>(string filePath, T defaultParams)
+    {
+        if (!File.Exists(filePath))
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+            string json = JsonUtility.ToJson(defaultParams, true);
+            File.WriteAllText(filePath, json);
+        }
+    }
     void UpdateVehicleParamsFromMenu()
     {
         vehicleParams.brakeKpaToNm = GameManager.Instance.Settings.myVehSetup.BrakeConstant;

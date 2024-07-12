@@ -219,7 +219,7 @@ public class VehicleDataPublisher : Publisher<VehicleData>
         canDashSwitchesCmdPublisher.Publish(new List<double>{ //FIXME
             0.0f, //driver_traction_aim_switch
             0.0f, //driver_traction_range_switch
-            0.0f //brake_bias_aim_switch
+            0.5f //brake_bias_aim_switch
         });
     }
     public VehicleDataSimulator vehSim;
