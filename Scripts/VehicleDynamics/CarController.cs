@@ -220,8 +220,13 @@ public class CarController : MonoBehaviour
         string fullSuspensionPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "PAIRSIM_config"), "Parameters/" + suspensionConfigFileName);
         CheckAndCreateDefaultFile(fullSuspensionPath, defaultSuspensionParams);
 
+        string brakeConfigFileName = "BrakeParams.json";
+        string fullBrakePath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "PAIRSIM_config"), "Parameters/" + brakeConfigFileName);
+        CheckAndCreateDefaultFile(fullBrakePath, defaultBrakeParams);
+
         LoadAeroParametersFromJson(fullAeroPath);
         LoadSuspensionParametersFromJson(fullSuspensionPath);
+        LoadBrakeParametersFromJson(fullBrakePath);
 
     }
 
@@ -249,6 +254,20 @@ public class CarController : MonoBehaviour
         public double lSpring;// = 0.3f; // [m]
     }
 
+    [System.Serializable]
+    public class BrakeParametersConfig
+    {
+    //---------- Brake Dynamics ----------------------
+        public int brakeDelay; // num discrete steps
+        public double brakeDelaySec;// = 0.04f; // s
+        public double maxBrakeKpa;// = 9000f; // max brake in kPa,
+        public double brakeKpaToNm;// = 0.54f;
+        public double brakeBias;// = 0.45f; // how much of the total torque goes to the front
+        public double brakeBandwidth;// = 1.0f; // lpf freq
+        public double brakeRate; // kpa/s at the wheel
+    }
+
+
     private AeroParametersConfig defaultAeroParams = new AeroParametersConfig
     {
         Af = 1.0, // [m^2] 
@@ -266,6 +285,16 @@ public class CarController : MonoBehaviour
         kSpring = 200000.0, // [N/m] 
         cDamper = 8000.0,// [Ns/m] 
         lSpring = 0.3//[m]
+    };
+    private BrakeParametersConfig defaultBrakeParams = new BrakeParametersConfig
+    {
+        brakeDelay = 20, // num discrete steps
+        brakeDelaySec = 0.04, // s
+        maxBrakeKpa = 6000.0, // max brake in kPa,
+        brakeKpaToNm = 1.0,
+        brakeBias = 0.54,// how much of the total torque goes to the front
+        brakeBandwidth = 5.0, // lpf freq
+        brakeRate = 180000.0 // kpa/s at the wheel
     };
 
     void LoadAeroParametersFromJson(string filePath)
@@ -293,7 +322,21 @@ public class CarController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Aerodynamic parameters file not found: " + fullPath);
+            Debug.LogError("Suspension parameters file not found: " + fullPath);
+        }
+    }
+    void LoadBrakeParametersFromJson(string filePath)
+    {
+        string fullPath = Path.Combine(Application.dataPath, filePath);
+        if (File.Exists(fullPath))
+        {
+            string jsonData = File.ReadAllText(fullPath);
+            BrakeParametersConfig Params = JsonUtility.FromJson<BrakeParametersConfig>(jsonData);
+            ApplyBrakeParameters(Params);
+        }
+        else
+        {
+            Debug.LogError("Brake parameters file not found: " + fullPath);
         }
     }
 
@@ -314,6 +357,15 @@ public class CarController : MonoBehaviour
         vehicleParams.kSpring = (float)config.kSpring; 
         vehicleParams.cDamper = (float)config.cDamper;
         vehicleParams.lSpring = (float)config.lSpring;
+
+    }
+    void ApplyBrakeParameters(BrakeParametersConfig config)
+    {
+        vehicleParams.brakeDelay = config.brakeDelay;
+        vehicleParams.brakeDelaySec = (float)config.brakeDelaySec;
+        vehicleParams.maxBrakeKpa = (float)config.maxBrakeKpa; 
+        vehicleParams.brakeBias = (float)config.brakeBias;
+        vehicleParams.brakeBandwidth = (float)config.brakeBandwidth;
 
     }
     //check to see if params file already exists, if not write the file
