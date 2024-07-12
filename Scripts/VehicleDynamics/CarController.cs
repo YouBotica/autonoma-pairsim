@@ -188,14 +188,6 @@ public class CarController : MonoBehaviour
     
     void Start()
     {
-        UpdateVehicleParamsFromMenu();
-
-        initializeBuffers();
-        carBody = GetComponent<Rigidbody>();
-        carBody.mass = vehicleParams.mass;
-        carBody.inertiaTensor = vehicleParams.Inertia;
-        carBody.centerOfMass = vehicleParams.centerOfMass;
-
         //Gaussian Noise Simulators
         float steerMean = GameManager.Instance.Settings.mySensorSet.steerMean;
         float steerVariance = GameManager.Instance.Settings.mySensorSet.steerVariance;
@@ -224,160 +216,32 @@ public class CarController : MonoBehaviour
         string fullBrakePath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "PAIRSIM_config"), "Parameters/" + brakeConfigFileName);
         CheckAndCreateDefaultFile(fullBrakePath, defaultBrakeParams);
 
+        string engineConfigFileName = "EngineParams.json";
+        string fullEnginePath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "PAIRSIM_config"), "Parameters/" + engineConfigFileName);
+        CheckAndCreateDefaultFile(fullEnginePath, defaultEngineParams);
+
+        string geometricConfigFileName = "GeometricParams.json";
+        string fullGeometricPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "PAIRSIM_config"), "Parameters/" + geometricConfigFileName);
+        CheckAndCreateDefaultFile(fullGeometricPath, defaultGeometricParams);
+
         LoadAeroParametersFromJson(fullAeroPath);
         LoadSuspensionParametersFromJson(fullSuspensionPath);
         LoadBrakeParametersFromJson(fullBrakePath);
+        LoadEngineParametersFromJson(fullEnginePath);
+        //Steering need not be loaded in from json since it's handled in Vehicle Setup
+        LoadGeometricParametersFromJson(fullGeometricPath);
 
-    }
 
-    [System.Serializable]
-    public class AeroParametersConfig
-    {
-        // ------------------Aerodynamics --------------------------
-        public double Af;// = 1; // [m^2] Frontal Area
-        public double ClF;// = 0.65f; // downforce coef. at the front axle
-        public double ClR;// = 0.5f*1.6f/1.3f; // downforce coef. at the rear axle
-        public Vector3 frontDownforcePos;
-        public Vector3 rearDownforcePos;
-        public double Cd;// = 0.81f; 
-        public Vector3 dragForcePos;// = new Vector3(0f,0.2f,0f); // [m] center of pressure for the drag force, above the origin point of the chassis
-    }
+        UpdateVehicleParamsFromMenu();
 
-    [System.Serializable]
-    public class SuspensionParametersConfig
-    {
-        // --------------- Suspension -----------------------
-        public double kArbFront;
-        public double kArbRear;
-        public double kSpring;// = 200000.0f; // [N/m] carrying 800kg car with 10cm deflection
-        public double cDamper;// = 4000.0f; //8855 [Ns/m] for zeta = 0.707 = c/(2*sqrt(km))
-        public double lSpring;// = 0.3f; // [m]
-    }
-
-    [System.Serializable]
-    public class BrakeParametersConfig
-    {
-    //---------- Brake Dynamics ----------------------
-        public int brakeDelay; // num discrete steps
-        public double brakeDelaySec;// = 0.04f; // s
-        public double maxBrakeKpa;// = 9000f; // max brake in kPa,
-        public double brakeKpaToNm;// = 0.54f;
-        public double brakeBias;// = 0.45f; // how much of the total torque goes to the front
-        public double brakeBandwidth;// = 1.0f; // lpf freq
-        public double brakeRate; // kpa/s at the wheel
+        initializeBuffers();
+        carBody = GetComponent<Rigidbody>();
+        carBody.mass = vehicleParams.mass;
+        carBody.inertiaTensor = vehicleParams.Inertia;
+        carBody.centerOfMass = vehicleParams.centerOfMass;
     }
 
 
-    private AeroParametersConfig defaultAeroParams = new AeroParametersConfig
-    {
-        Af = 1.0, // [m^2] 
-        ClF = 0.65, // downforce coef. at the front axle
-        ClR = 1.18,// // downforce coef. at the rear axle
-        frontDownforcePos = new Vector3(0.0f, 0.0f, 1.7f),
-        rearDownforcePos = new Vector3(0.0f, 0.0f, -1.3f),
-        Cd = 0.8581, 
-        dragForcePos = new Vector3(0.0f, 0.0f, 0.0f) // [m] center of pressure for the drag force, above the origin point of the chassis
-    };
-    private SuspensionParametersConfig defaultSuspensionParams = new SuspensionParametersConfig
-    {
-        kArbFront = 463593.0,
-        kArbRear = 358225.0,
-        kSpring = 200000.0, // [N/m] 
-        cDamper = 8000.0,// [Ns/m] 
-        lSpring = 0.3//[m]
-    };
-    private BrakeParametersConfig defaultBrakeParams = new BrakeParametersConfig
-    {
-        brakeDelay = 20, // num discrete steps
-        brakeDelaySec = 0.04, // s
-        maxBrakeKpa = 6000.0, // max brake in kPa,
-        brakeKpaToNm = 1.0,
-        brakeBias = 0.54,// how much of the total torque goes to the front
-        brakeBandwidth = 5.0, // lpf freq
-        brakeRate = 180000.0 // kpa/s at the wheel
-    };
-
-    void LoadAeroParametersFromJson(string filePath)
-    {
-        string fullPath = Path.Combine(Application.dataPath, filePath);
-        if (File.Exists(fullPath))
-        {
-            string jsonData = File.ReadAllText(fullPath);
-            AeroParametersConfig Params = JsonUtility.FromJson<AeroParametersConfig>(jsonData);
-            ApplyAeroParameters(Params);
-        }
-        else
-        {
-            Debug.LogError("Aerodynamic parameters file not found: " + fullPath);
-        }
-    }
-    void LoadSuspensionParametersFromJson(string filePath)
-    {
-        string fullPath = Path.Combine(Application.dataPath, filePath);
-        if (File.Exists(fullPath))
-        {
-            string jsonData = File.ReadAllText(fullPath);
-            SuspensionParametersConfig Params = JsonUtility.FromJson<SuspensionParametersConfig>(jsonData);
-            ApplySuspensionParameters(Params);
-        }
-        else
-        {
-            Debug.LogError("Suspension parameters file not found: " + fullPath);
-        }
-    }
-    void LoadBrakeParametersFromJson(string filePath)
-    {
-        string fullPath = Path.Combine(Application.dataPath, filePath);
-        if (File.Exists(fullPath))
-        {
-            string jsonData = File.ReadAllText(fullPath);
-            BrakeParametersConfig Params = JsonUtility.FromJson<BrakeParametersConfig>(jsonData);
-            ApplyBrakeParameters(Params);
-        }
-        else
-        {
-            Debug.LogError("Brake parameters file not found: " + fullPath);
-        }
-    }
-
-    void ApplyAeroParameters(AeroParametersConfig config)
-    {
-        vehicleParams.Af = (float)config.Af;
-        vehicleParams.ClF = (float)config.ClF;
-        vehicleParams.ClR = (float)config.ClR;
-        vehicleParams.frontDownforcePos = config.frontDownforcePos;
-        vehicleParams.rearDownforcePos = config.rearDownforcePos;
-        vehicleParams.Cd = (float)config.Cd;
-        vehicleParams.dragForcePos = config.dragForcePos;
-    }
-    void ApplySuspensionParameters(SuspensionParametersConfig config)
-    {
-        vehicleParams.kArbFront = (float)config.kArbFront;
-        vehicleParams.kArbRear = (float)config.kArbRear;
-        vehicleParams.kSpring = (float)config.kSpring; 
-        vehicleParams.cDamper = (float)config.cDamper;
-        vehicleParams.lSpring = (float)config.lSpring;
-
-    }
-    void ApplyBrakeParameters(BrakeParametersConfig config)
-    {
-        vehicleParams.brakeDelay = config.brakeDelay;
-        vehicleParams.brakeDelaySec = (float)config.brakeDelaySec;
-        vehicleParams.maxBrakeKpa = (float)config.maxBrakeKpa; 
-        vehicleParams.brakeBias = (float)config.brakeBias;
-        vehicleParams.brakeBandwidth = (float)config.brakeBandwidth;
-
-    }
-    //check to see if params file already exists, if not write the file
-    void CheckAndCreateDefaultFile<T>(string filePath, T defaultParams)
-    {
-        if (!File.Exists(filePath))
-        {
-            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-            string json = JsonUtility.ToJson(defaultParams, true);
-            File.WriteAllText(filePath, json);
-        }
-    }
     void UpdateVehicleParamsFromMenu()
     {
         vehicleParams.brakeKpaToNm = GameManager.Instance.Settings.myVehSetup.BrakeConstant;
@@ -424,5 +288,316 @@ public class CarController : MonoBehaviour
     {
         float[] v = vehicleState.V;
         return new Vector3(v[0], v[1], v[2]).magnitude;
+    }
+
+    float[] ConvertDoubleArrayToFloatArray(double[] doubleArray)
+    {
+        return Array.ConvertAll(doubleArray, item => (float)item);
+    }
+
+// ============ Configuration File Functions ===============
+    [System.Serializable]
+    public class AeroParametersConfig
+    {
+        public double Af;
+        public double ClF;
+        public double ClR;
+        // public Vector3 frontDownforcePos; //dependent variable
+        // public Vector3 rearDownforcePos; //dependent variable
+        public double Cd;
+        public Vector3 dragForcePos;
+    }
+    private AeroParametersConfig defaultAeroParams = new AeroParametersConfig
+    {
+        Af = 1.0, 
+        ClF = 0.65, 
+        ClR = 1.18,
+        // frontDownforcePos = new Vector3(0.0f, 0.0f, 1.7f), //dependent variable
+        // rearDownforcePos = new Vector3(0.0f, 0.0f, -1.3f), //dependent variable
+        Cd = 0.8581, 
+        dragForcePos = new Vector3(0.0f, 0.0f, 0.0f) 
+    };
+    void LoadAeroParametersFromJson(string filePath)
+    {
+        string fullPath = Path.Combine(Application.dataPath, filePath);
+        if (File.Exists(fullPath))
+        {
+            string jsonData = File.ReadAllText(fullPath);
+            AeroParametersConfig Params = JsonUtility.FromJson<AeroParametersConfig>(jsonData);
+            ApplyAeroParameters(Params);
+        }
+        else
+        {
+            Debug.LogError("Aerodynamic parameters file not found: " + fullPath);
+        }
+    }
+    void ApplyAeroParameters(AeroParametersConfig config)
+    {
+        vehicleParams.Af = (float)config.Af;
+        vehicleParams.ClF = (float)config.ClF;
+        vehicleParams.ClR = (float)config.ClR;
+        // vehicleParams.frontDownforcePos = config.frontDownforcePos; //dependent variable
+        // vehicleParams.rearDownforcePos = config.rearDownforcePos; //dependent variable
+        vehicleParams.Cd = (float)config.Cd;
+        vehicleParams.dragForcePos = config.dragForcePos;
+    }
+
+    [System.Serializable]
+    public class SuspensionParametersConfig
+    {
+        // public double kArbFront; //configured in Vehicle Setup
+        // public double kArbRear; //configured in Vehicle Setup
+        public double kSpring;
+        public double cDamper;
+        public double lSpring;
+    }
+    private SuspensionParametersConfig defaultSuspensionParams = new SuspensionParametersConfig
+    {
+        // kArbFront = 463593.0, //configured in Vehicle Setup
+        // kArbRear = 358225.0, //configured in Vehicle Setup
+        kSpring = 200000.0, 
+        cDamper = 8000.0,
+        lSpring = 0.3
+    };
+
+    void LoadSuspensionParametersFromJson(string filePath)
+    {
+        string fullPath = Path.Combine(Application.dataPath, filePath);
+        if (File.Exists(fullPath))
+        {
+            string jsonData = File.ReadAllText(fullPath);
+            SuspensionParametersConfig Params = JsonUtility.FromJson<SuspensionParametersConfig>(jsonData);
+            ApplySuspensionParameters(Params);
+        }
+        else
+        {
+            Debug.LogError("Suspension parameters file not found: " + fullPath);
+        }
+    }
+
+    void ApplySuspensionParameters(SuspensionParametersConfig config)
+    {
+        // vehicleParams.kArbFront = (float)config.kArbFront; //configured in Vehicle Setup
+        // vehicleParams.kArbRear = (float)config.kArbRear; //configured in Vehicle Setup
+        vehicleParams.kSpring = (float)config.kSpring; 
+        vehicleParams.cDamper = (float)config.cDamper;
+        vehicleParams.lSpring = (float)config.lSpring;
+
+    }
+
+    [System.Serializable]
+    public class BrakeParametersConfig
+    {
+        // public int brakeDelay; //dependent variable
+        public double brakeDelaySec;
+        public double maxBrakeKpa;
+        // public double brakeKpaToNm; //configured in Vehicle Setup (Brake Constant)
+        public double brakeBias;
+        public double brakeBandwidth;
+        // public double brakeRate;  //dependent variable
+    }
+    private BrakeParametersConfig defaultBrakeParams = new BrakeParametersConfig
+    {
+        // brakeDelay = 20, // dependent variable
+        brakeDelaySec = 0.04, 
+        maxBrakeKpa = 6000.0, 
+        // brakeKpaToNm = 1.0, //configured in Vehicle Setup (Brake Constant)
+        brakeBias = 0.54,
+        brakeBandwidth = 5.0, 
+        // brakeRate = 180000.0  //dependent variable
+    };
+
+    void ApplyBrakeParameters(BrakeParametersConfig config)
+    {
+        // vehicleParams.brakeDelay = config.brakeDelay; //dependent variable
+        vehicleParams.brakeDelaySec = (float)config.brakeDelaySec;
+        vehicleParams.maxBrakeKpa = (float)config.maxBrakeKpa; 
+        // vehicleParams.brakeKpaToNm = (float)config.brakeKpaToNm; //configured in Vehicle Setup (Brake Constant)
+        vehicleParams.brakeBias = (float)config.brakeBias;
+        vehicleParams.brakeBandwidth = (float)config.brakeBandwidth;
+        // vehicleParams.brakeRate = (float)config.brakeRate; //dependent variable 
+
+    }
+
+    void LoadBrakeParametersFromJson(string filePath)
+    {
+        string fullPath = Path.Combine(Application.dataPath, filePath);
+        if (File.Exists(fullPath))
+        {
+            string jsonData = File.ReadAllText(fullPath);
+            BrakeParametersConfig Params = JsonUtility.FromJson<BrakeParametersConfig>(jsonData);
+            ApplyBrakeParameters(Params);
+        }
+        else
+        {
+            Debug.LogError("Brake parameters file not found: " + fullPath);
+        }
+    }
+
+    [System.Serializable]
+    public class EngineParametersConfig
+    {
+        public int numGears;
+        public double[] gearRatio;
+        public double[] enginePoly;
+        public double throttleBandwidth;
+        public double throttleRate;
+        public double torqueRate;
+        public int numPointsThrottleMap;
+        public double[] throttleMapInput;
+        public double[] throttleMapOutput;
+        public double maxEngineRpm;
+        public double minEngineMapRpm;
+        public double engineFrictionTorque;
+        public double engineInertia;
+        public double frontDifferentialDamping;
+        public double rearDifferentialDamping;
+        // public bool rearSolidAxle; //configured in Vehicle Setup (is LSD))
+    }
+
+    private EngineParametersConfig defaultEngineParams = new EngineParametersConfig
+    {
+        numGears = 6,
+        gearRatio = new double[] {
+            8.75, 
+            5.625, 
+            4.1427, 
+            3.3462, 
+            2.88, 
+            2.666667},
+        enginePoly = new double[] {
+            -0.0000456821, 
+            0.489643, 
+            -754.247},
+        throttleBandwidth = 1.0, 
+        throttleRate = 50.0, 
+        torqueRate = 300.0,  
+        numPointsThrottleMap = 4,
+        throttleMapInput = new double[] {
+            0.0, 
+            0.2, 
+            0.5, 
+            1.0},
+        throttleMapOutput = new double[] {
+            0.0,
+            0.4,
+            0.7, 
+            1.0},
+        maxEngineRpm = 7500.0,
+        minEngineMapRpm = 3000.0,
+        engineFrictionTorque = 30.0,
+        engineInertia = 0.2,
+        frontDifferentialDamping = 0.0,
+        rearDifferentialDamping = 5.0,
+        // rearSolidAxle = false //configured in Vehicle Setup (is LSD))
+    };
+
+    void LoadEngineParametersFromJson(string filePath)
+    {
+        string fullPath = Path.Combine(Application.dataPath, filePath);
+        if (File.Exists(fullPath))
+        {
+            string jsonData = File.ReadAllText(fullPath);
+            EngineParametersConfig Params = JsonUtility.FromJson<EngineParametersConfig>(jsonData);
+            ApplyEngineParameters(Params);
+        }
+        else
+        {
+            Debug.LogError("Engine parameters file not found: " + fullPath);
+        }
+    }
+
+    void ApplyEngineParameters(EngineParametersConfig config)
+    {
+        vehicleParams.numGears = config.numGears;
+        vehicleParams.gearRatio = ConvertDoubleArrayToFloatArray(config.gearRatio);
+        vehicleParams.enginePoly = config.enginePoly;
+        vehicleParams.throttleBandwidth = (float)config.throttleBandwidth;
+        vehicleParams.throttleRate = (float)config.throttleRate; 
+        vehicleParams.torqueRate = (float)config.torqueRate; 
+        vehicleParams.numPointsThrottleMap = config.numPointsThrottleMap;
+        vehicleParams.throttleMapInput = ConvertDoubleArrayToFloatArray(config.throttleMapInput);
+        vehicleParams.throttleMapOutput = ConvertDoubleArrayToFloatArray(config.throttleMapOutput);
+        vehicleParams.maxEngineRpm = (float)config.maxEngineRpm;
+        vehicleParams.minEngineMapRpm = (float)config.minEngineMapRpm;
+        vehicleParams.engineFrictionTorque = (float)config.engineFrictionTorque;
+        vehicleParams.engineInertia = (float)config.engineInertia;
+        vehicleParams.frontDifferentialDamping = (float)config.frontDifferentialDamping;
+        vehicleParams.rearDifferentialDamping = (float)config.frontDifferentialDamping;
+        // vehicleParams.rearSolidAxle = config.rearSolidAxle; //configured in Vehicle Setup (is LSD))
+
+    }
+
+    [System.Serializable]
+    public class GeometricParametersConfig
+    {
+        public double mass;
+        public Vector3 centerOfMass; 
+        public Vector3 Inertia;
+        public double lf;
+        public double lr;
+        public double twf;
+        public double twr;
+        // public Vector3 w1pos; //dependent variable
+        // public Vector3 w2pos; //dependent variable
+        // public Vector3 w3pos; //dependent variable
+        // public Vector3 w4pos; //dependent variable
+    }
+
+    private GeometricParametersConfig defaultGeometricParams = new GeometricParametersConfig
+    {
+        mass = 790.0, 
+        centerOfMass = new Vector3(0f, 0.2f, 0f),
+        Inertia = new Vector3(550f, 800f, 265f), 
+        lf = 1.7, 
+        lr = -1.3, 
+        twf = 0.838,
+        twr = 0.79,
+        // w1pos = new Vector3(-0.838f, 0.626f, 1.7f), //dependent variable
+        // w2pos = new Vector3(0.838f, 0.626f, 1.7f), //dependent variable
+        // w3pos = new Vector3(-0.79f, 0.626f, -1.3f), //dependent variable
+        // w4pos = new Vector3(0.79f, 0.626f, -1.3f) //dependent variable
+    };
+
+    void LoadGeometricParametersFromJson(string filePath)
+    {
+        string fullPath = Path.Combine(Application.dataPath, filePath);
+        if (File.Exists(fullPath))
+        {
+            string jsonData = File.ReadAllText(fullPath);
+            GeometricParametersConfig Params = JsonUtility.FromJson<GeometricParametersConfig>(jsonData);
+            ApplyGeometricParameters(Params);
+        }
+        else
+        {
+            Debug.LogError("Geometric parameters file not found: " + fullPath);
+        }
+    }
+
+    void ApplyGeometricParameters(GeometricParametersConfig config)
+    {
+        vehicleParams.mass = (float)config.mass; 
+        vehicleParams.centerOfMass = config.centerOfMass;
+        vehicleParams.Inertia = config.Inertia; 
+        vehicleParams.lf = (float)config.lf; 
+        vehicleParams.lr = (float)config.lr; 
+        vehicleParams.twf = (float)config.twf; 
+        vehicleParams.twr = (float)config.twr;
+        // vehicleParams.w1pos = config.w1pos; //dependent variable
+        // vehicleParams.w2pos = config.w2pos; //dependent variable
+        // vehicleParams.w3pos = config.w3pos; //dependent variable
+        // vehicleParams.w4pos = config.w4pos; //dependent variable
+
+    }
+
+    //check to see if params file already exists, if not write the file
+    void CheckAndCreateDefaultFile<T>(string filePath, T defaultParams)
+    {
+        if (!File.Exists(filePath))
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+            string json = JsonUtility.ToJson(defaultParams, true);
+            File.WriteAllText(filePath, json);
+        }
     }
 }

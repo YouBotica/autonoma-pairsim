@@ -282,8 +282,13 @@ public class WheelController : MonoBehaviour
         axleTyreParams.hT = (float)config.hT;
         axleTyreParams.ACp = (float)config.ACp;
         axleTyreParams.numPointsFrictionMap = config.numPointsFrictionMap;
-        axleTyreParams.thermalFrictionMapInput = config.thermalFrictionMapInput;
-        axleTyreParams.thermalFrictionMapOutput = config.thermalFrictionMapOutput;
+        axleTyreParams.thermalFrictionMapInput = ConvertDoubleArrayToFloatArray(config.thermalFrictionMapInput);
+        axleTyreParams.thermalFrictionMapOutput = ConvertDoubleArrayToFloatArray(config.thermalFrictionMapOutput);
+    }
+    // Conversion function to convert double arrays to float arrays
+    float[] ConvertDoubleArrayToFloatArray(double[] doubleArray)
+    {
+        return Array.ConvertAll(doubleArray, item => (float)item);
     }
 
     [System.Serializable]
@@ -305,8 +310,8 @@ public class WheelController : MonoBehaviour
         public double tyreRadius;
         public double p1, p2, p3, p4, p5, p6, p7, mT, cT, hT, ACp;
         public int numPointsFrictionMap;
-        public float[] thermalFrictionMapInput;
-        public float[] thermalFrictionMapOutput;
+        public double[] thermalFrictionMapInput;
+        public double[] thermalFrictionMapOutput;
     }
     private TyreParametersConfig defaultFrontAxleParams = new TyreParametersConfig
     {
@@ -336,8 +341,8 @@ public class WheelController : MonoBehaviour
         hT = 12,
         ACp = 0.01,
         numPointsFrictionMap = 5,
-        thermalFrictionMapInput = new float[] {0f, 30f, 70f, 100f, 130f},
-        thermalFrictionMapOutput = new float[] {0.8f, 0.9f, 1f, 1f, 0.8f}
+        thermalFrictionMapInput = new double[] {0.0, 30.0, 70.0, 100.0, 130.0},
+        thermalFrictionMapOutput = new double[] {0.8, 0.9, 1.0, 1.0, 0.8}
     };
     private TyreParametersConfig defaultRearAxleParams = new TyreParametersConfig
     {
@@ -367,8 +372,8 @@ public class WheelController : MonoBehaviour
         hT = 12,
         ACp = 0.01,
         numPointsFrictionMap = 5,
-        thermalFrictionMapInput = new float[] {0f, 30f, 70f, 100f, 130f},
-        thermalFrictionMapOutput = new float[] {0.8f, 0.9f, 1f, 1f, 0.8f}
+        thermalFrictionMapInput = new double[] {0.0, 30.0, 70.0, 100.0, 130.0},
+        thermalFrictionMapOutput = new double[] {0.8, 0.9, 1.0, 1.0, 0.8}
     };
     void FixedUpdate() 
     {   

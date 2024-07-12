@@ -35,7 +35,7 @@ public class VehicleParameters : ScriptableObject
     // ----- Steering kinematics and actuator dynamics
     public float maxSteeringAngle;// = 200f;
     public float steeringRatio;// = -19.5f; // ratio between input steering angle to wheel angle. whats the max input angle ? 
-    public int steeringDelay;
+    public int steeringDelay; 
     public float steeringDelaySec;// = 0.04f; // s
     public float steeringBandwidth;// = 1.0f; // lpf freq
     public float steeringRate;// = 60.0f; // deg/s at the wheel
@@ -85,13 +85,13 @@ public class VehicleParameters : ScriptableObject
     public float Cd;// = 0.81f; 
     public Vector3 dragForcePos;// = new Vector3(0f,0.2f,0f); // [m] center of pressure for the drag force, above the origin point of the chassis
 
-    public void calcDepVars()
+    public void calcDepVars() //will override all .json and .asset files
     {
         brakeDelay = (int)Mathf.RoundToInt(brakeDelaySec/Time.fixedDeltaTime);
         steeringDelay = (int) Mathf.RoundToInt(steeringDelaySec/Time.fixedDeltaTime);
         brakeRate = maxBrakeKpa*60.0f;
         frontDownforcePos = new Vector3(0f,0f,lf); 
-        rearDownforcePos = new Vector3(0f,0f,lr);
+        rearDownforcePos = new Vector3(0f,0f,lr); 
         w1pos = new Vector3(-twf, lSpring + frontTyreParams.tyreRadius, lf);
         w2pos = new Vector3(twf, lSpring + frontTyreParams.tyreRadius, lf);
         w3pos = new Vector3(-twr, lSpring + rearTyreParams.tyreRadius, lr);

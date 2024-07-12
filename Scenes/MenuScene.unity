@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 262.3369, g: 325.0498, b: 430.2192, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -22424,6 +22424,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5825674310924065062, guid: 73ab29c0a336b4a07986d91716ff46e1, type: 3}
+      propertyPath: m_text
+      value: 'Steering ratio /
+
+        Brake constant (Nm/kPa)'
+      objectReference: {fileID: 0}
     - target: {fileID: 5825674310924065065, guid: 73ab29c0a336b4a07986d91716ff46e1, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -22575,6 +22581,14 @@ PrefabInstance:
     - target: {fileID: 5825674311481058976, guid: 73ab29c0a336b4a07986d91716ff46e1, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5825674311481058977, guid: 73ab29c0a336b4a07986d91716ff46e1, type: 3}
+      propertyPath: m_text
+      value: "Steering Delay (s) / \nbandwidth (hz)"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5825674311481058979, guid: 73ab29c0a336b4a07986d91716ff46e1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5825674311965923922, guid: 73ab29c0a336b4a07986d91716ff46e1, type: 3}
       propertyPath: m_Sprite
