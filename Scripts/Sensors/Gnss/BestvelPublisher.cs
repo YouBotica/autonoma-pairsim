@@ -28,6 +28,8 @@ public class BestvelPublisher : Publisher<BESTVEL>
     {
         // get things from sensor assigned by ui to the sensor
     }
+    public NoiseGenerator velNoiseGenerator;
+
     protected override void Start()
     {
         getPublisherParams();
@@ -36,6 +38,19 @@ public class BestvelPublisher : Publisher<BESTVEL>
         this.frequency = modifiedFrequency; // Hz
         this.frameId = modifiedFrameId;
         base.Start();
+
+        float velMean = GameManager.Instance.Settings.mySensorSet.velMean;
+        float velVariance = GameManager.Instance.Settings.mySensorSet.velVariance;
+        int velSeed = GameManager.Instance.Settings.mySensorSet.velSeed;
+        velNoiseGenerator = new NoiseGenerator(velMean, velVariance, velSeed);
+        // Burn some random numbers for top sensor to create divergence
+        if (modifiedRosNamespace.Equals("/novatel_top"))
+        {
+            for (int i = 0; i < 100; i++) // Example: Burn 100 numbers
+            {
+                velNoiseGenerator.NextGaussian();
+            }
+        }
     }
     public GnssSimulator gnssSim;
     public override void fillMsg()
@@ -49,10 +64,16 @@ public class BestvelPublisher : Publisher<BESTVEL>
         msg.Vel_type.Type = 50;
         msg.Latency = 0.0f;
         msg.Diff_age = 0.0f;
-        msg.Hor_speed = Mathf.Sqrt(Mathf.Pow(gnssSim.vE,2) + Mathf.Pow(gnssSim.vN,2) );
+        // msg.Hor_speed = Mathf.Sqrt(Mathf.Pow(gnssSim.vE,2) + Mathf.Pow(gnssSim.vN,2) );
         msg.Trk_gnd = (Mathf.Atan2(gnssSim.vE,gnssSim.vN)*180f/Mathf.PI) % 360;
-        msg.Ver_speed = gnssSim.vU;
+        // msg.Ver_speed = gnssSim.vU;
         msg.Reserved = 0.0f;
+
+        float velNoiseHorSpeed = (float)velNoiseGenerator.NextGaussian();
+        float velNoiseVerSpeed = (float)velNoiseGenerator.NextGaussian();
+        msg.Hor_speed = Mathf.Sqrt(Mathf.Pow(gnssSim.vE,2) + Mathf.Pow(gnssSim.vN,2)) + velNoiseHorSpeed;
+        msg.Ver_speed = gnssSim.vU + velNoiseVerSpeed;
+
     }
 } // end of class
 } // end of autonoma namespace

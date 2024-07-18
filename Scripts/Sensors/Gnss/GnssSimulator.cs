@@ -30,8 +30,7 @@ public class GnssSimulator : MonoBehaviour
     public double lat0,lon0,h0;    
     public float vE, vN, vU;
     public TrackParams trackParams;
-    public NoiseGenerator posNoiseGenerator;
-    public NoiseGenerator velNoiseGenerator;
+
     void Start() 
     {
         rb = HelperFunctions.GetParentComponent<Rigidbody>(transform);
@@ -53,16 +52,6 @@ public class GnssSimulator : MonoBehaviour
             }
         }
 
-        float posMean = GameManager.Instance.Settings.mySensorSet.posMean;
-        float posVariance = GameManager.Instance.Settings.mySensorSet.posVariance;
-        int posSeed = GameManager.Instance.Settings.mySensorSet.posSeed;
-        posNoiseGenerator = new NoiseGenerator(posMean, posVariance, posSeed);
-
-        float velMean = GameManager.Instance.Settings.mySensorSet.velMean;
-        float velVariance = GameManager.Instance.Settings.mySensorSet.velVariance;
-        int velSeed = GameManager.Instance.Settings.mySensorSet.velSeed;
-        velNoiseGenerator = new NoiseGenerator(velMean, velVariance, velSeed);
-
     } 
     void FixedUpdate()
     {   
@@ -77,23 +66,6 @@ public class GnssSimulator : MonoBehaviour
         vE = antennaVelGlobal[0];
         vN = antennaVelGlobal[1];
         vU = antennaVelGlobal[2];
-
-        // Add Gaussian noise to GNSS Vel
-        float velNoiseE = (float)velNoiseGenerator.NextGaussian();
-        float velNoiseN = (float)velNoiseGenerator.NextGaussian();
-        float velNoiseU = (float)velNoiseGenerator.NextGaussian();
-        vE += velNoiseE;
-        vN += velNoiseN;
-        vU += velNoiseU;
-
-        // Add Gaussian noise to GNSS lat Lon [m -> lat/lon]
-        float latNoise= (float)posNoiseGenerator.NextGaussian() * 0.00001f;
-        float lonNoise = (float)posNoiseGenerator.NextGaussian() * 0.00001f;
-        float heightNoise= (float)posNoiseGenerator.NextGaussian();
-        lat += latNoise;
-        lon += lonNoise;
-        height += heightNoise;
-
 
     }
 

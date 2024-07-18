@@ -14,20 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 790
   centerOfMass: {x: 0, y: 0.2, z: 0}
-  Inertia: {x: 265, y: 550, z: 800}
+  Inertia: {x: 550, y: 800, z: 265}
   lf: 1.7
   lr: -1.3
-  twf: 0.838 
+  twf: 0.838
   twr: 0.79
-  w1pos: {x: -0.838, y: 0.626, z: 1.7}
-  w2pos: {x: 0.838, y: 0.626, z: 1.7}
-  w3pos: {x: -0.79, y: 0.626, z: -1.3}
-  w4pos: {x: 0.79, y: 0.626, z: -1.3}
+  w1pos: {x: -0.838, y: 0.62600005, z: 1.7}
+  w2pos: {x: 0.838, y: 0.62600005, z: 1.7}
+  w3pos: {x: -0.79, y: 0.62600005, z: -1.3}
+  w4pos: {x: 0.79, y: 0.62600005, z: -1.3}
   maxSteeringAngle: 240
-  steeringRatio: -15.0
-  steeringDelay: 3
-  steeringDelaySec: 0.04
-  steeringBandwidth: 3
+  steeringRatio: -15
+  steeringDelay: 5
+  steeringDelaySec: 0.01
+  steeringBandwidth: 5
   steeringRate: 500
   numGears: 6
   gearRatio:
@@ -60,15 +60,15 @@ MonoBehaviour:
   engineFrictionTorque: 30
   engineInertia: 0.2
   frontDifferentialDamping: 0
-  rearDifferentialDamping: 5
-  rearSolidAxle: 0
+  rearDifferentialDamping: 0
+  rearSolidAxle: 1
   brakeDelay: 20
   brakeDelaySec: 0.04
   maxBrakeKpa: 6000
   brakeKpaToNm: 1
   brakeBias: 0.54
   brakeBandwidth: 5
-  brakeRate: 180000
+  brakeRate: 360000
   kArbFront: 463593
   kArbRear: 358225
   kSpring: 200000

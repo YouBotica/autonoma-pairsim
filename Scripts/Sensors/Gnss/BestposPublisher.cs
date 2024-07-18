@@ -28,6 +28,8 @@ public class BestposPublisher : Publisher<BESTPOS>
     {
         // get things from sensor assigned by ui to the sensor
     }
+    public NoiseGenerator posNoiseGenerator;
+
     protected override void Start()
     {
         getPublisherParams();
@@ -36,6 +38,21 @@ public class BestposPublisher : Publisher<BESTPOS>
         this.frequency = modifiedFrequency; // Hz
         this.frameId = modifiedFrameId;
         base.Start();
+
+        float posMean = GameManager.Instance.Settings.mySensorSet.posMean;
+        float posVariance = GameManager.Instance.Settings.mySensorSet.posVariance;
+        int posSeed = GameManager.Instance.Settings.mySensorSet.posSeed;
+        posNoiseGenerator = new NoiseGenerator(posMean, posVariance, posSeed);
+
+        // Burn some random numbers for top sensor to create divergence
+        if (modifiedRosNamespace.Equals("/novatel_top"))
+        {
+            for (int i = 0; i < 100; i++) // Example: Burn 100 numbers
+            {
+                posNoiseGenerator.NextGaussian();
+            }
+        }
+
     }
     public GnssSimulator gnssSim;
     public override void fillMsg()
@@ -43,12 +60,12 @@ public class BestposPublisher : Publisher<BESTPOS>
         (ushort week, uint ms) weekMs = GnssSimulator.GetGPSWeekAndMS();
         msg.Nov_header.Gps_week_number = weekMs.week;
         msg.Nov_header.Gps_week_milliseconds = weekMs.ms;
-        
+
         msg.Pos_type = new PositionOrVelocityType();
         msg.Pos_type.Type = 50;
-        msg.Lat = gnssSim.llh[0];
-        msg.Lon = gnssSim.llh[1];
-        msg.Hgt = gnssSim.llh[2];
+        // msg.Lat = gnssSim.llh[0];
+        // msg.Lon = gnssSim.llh[1];
+        // msg.Hgt = gnssSim.llh[2];
         msg.Undulation = 0.0f;
         msg.Datum_id = 0;
         msg.Lat_stdev = 0.01f;
@@ -64,6 +81,15 @@ public class BestposPublisher : Publisher<BESTPOS>
         msg.Ext_sol_stat = new BestExtendedSolutionStatus();
         msg.Galileo_beidou_sig_mask = 0;
         msg.Gps_glonass_sig_mask = 0;
+
+        float latNoise= (float)posNoiseGenerator.NextGaussian() * 0.00001f;
+        float lonNoise = (float)posNoiseGenerator.NextGaussian() * 0.00001f;
+        float heightNoise= (float)posNoiseGenerator.NextGaussian();
+
+        msg.Lat = gnssSim.llh[0] + latNoise;
+        msg.Lon = gnssSim.llh[1] + lonNoise;
+        msg.Hgt = gnssSim.llh[2] + heightNoise;
+
     }
 } // end of class
 } // end of autonoma namespace
