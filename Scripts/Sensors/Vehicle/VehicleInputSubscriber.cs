@@ -33,7 +33,8 @@ public class VehicleInputSubscriber : MonoBehaviour
     CanSubscriber canThrottleCommandSubscriber;
     CanSubscriber canBrakeCommandSubscriber;
     CanSubscriber canGearCommandSubscriber;
-    CanSubscriber canDashSwitchesCmdSubscriber; //FIXME
+    CanSubscriber canDashSwitchesCmdSubscriber; 
+    // private bool brakeBiasMessageReceived = false;
 
     void Start()
     {
@@ -72,6 +73,21 @@ public class VehicleInputSubscriber : MonoBehaviour
             if (newGear < carController.gear)
             {
                 carController.gearDown = true;
+            }
+        });
+// BO_ 1406 dash_switches_cmd: 8 Vector__XXX
+//  SG_ driver_traction_aim_switch : 0|4@1+ (1,0) [0|0] "" Vector__XXX
+//  SG_ driver_traction_range_switch : 4|4@1+ (1,0) [0|0] "" Vector__XXX
+//  SG_ brake_bias_aim_switch : 8|4@1+ (1,0) [0|0] "" Vector__XXX
+        canDashSwitchesCmdSubscriber = new CanSubscriber("dash_switches_cmd", qosSettings, data_values => {
+            Debug.Log("Received Can Dash Switches msg");
+            if (carController.brakeCmd == 0f){
+                carController.vehicleParams.brakeBias = 0.5f;
+                if(!(data_values == null))
+                {
+                    Debug.Log("Dash Switches Cmd Message recieved: " + (0.5f + (float)data_values[2] / 100f));
+                    carController.vehicleParams.brakeBias = 0.5f + (float)data_values[2] / 100f;
+                }
             }
         });
     }

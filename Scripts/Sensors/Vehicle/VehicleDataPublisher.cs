@@ -87,7 +87,7 @@ public class VehicleDataPublisher : Publisher<VehicleData>
         canBrakeReportExtdPublisher = new CanPublisher("brake_report_extd", rosNamespace, qosSettings);
         canBrakeReportExtd2Publisher = new CanPublisher("brake_report_extd_2", rosNamespace, qosSettings);
         canWheelSpeedReportPublisher = new CanPublisher("wheel_speed_report", rosNamespace, qosSettings);
-        canDashSwitchesCmdPublisher = new CanPublisher("dash_switches_cmd", rosNamespace, qosSettings);
+        // canDashSwitchesCmdPublisher = new CanPublisher("dash_switches_cmd", rosNamespace, qosSettings);
 
     }
     protected override void OnPublishMessage()
@@ -216,11 +216,13 @@ public class VehicleDataPublisher : Publisher<VehicleData>
             vehSim.ws_rear_right
         });
 
-        canDashSwitchesCmdPublisher.Publish(new List<double>{ //FIXME
-            0.0f, //driver_traction_aim_switch
-            0.0f, //driver_traction_range_switch
-            0.5f //brake_bias_aim_switch
-        });
+        ////Car shouldnt publish this msg
+        // canDashSwitchesCmdPublisher.Publish(new List<double>{ 
+        //     0.0f, //driver_traction_aim_switch
+        //     0.0f, //driver_traction_range_switch
+        //     vehSim.brake_bias_aim_switch //brake_bias_aim_switch
+        // });
+        
     }
     public VehicleDataSimulator vehSim;
     public RaptorSM sm;

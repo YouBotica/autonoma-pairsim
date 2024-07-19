@@ -1,5 +1,5 @@
 /* 
-Copyright 2023 Autonoma, Inc.
+Copyright 2024 Purdue AI Racing
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -79,6 +79,10 @@ public class VehicleDataSimulator : MonoBehaviour
     public float ws_front_right;
     public float ws_rear_left;
     public float ws_rear_right;
+
+    public float brake_bias;
+    public float brake_bias_aim_switch;
+
     void Start()
     {
         carController = HelperFunctions.GetParentComponent<CarController>(transform);
@@ -136,6 +140,9 @@ public class VehicleDataSimulator : MonoBehaviour
         ws_front_right =  wheelControllers[1].omega > 1.5f ? wheelControllers[1].omega  *   carController.vehicleParams.frontTyreParams.tyreRadius * 3.6f : 0.0f;
         ws_rear_left =  wheelControllers[2].omega  > 1.5f ? wheelControllers[2].omega  *   carController.vehicleParams.rearTyreParams.tyreRadius * 3.6f : 0.0f;
         ws_rear_right =  wheelControllers[3].omega > 1.5f ? wheelControllers[3].omega  *   carController.vehicleParams.rearTyreParams.tyreRadius * 3.6f : 0.0f;
+
+        brake_bias = carController.vehicleParams.brakeBias;
+        brake_bias_aim_switch = (brake_bias - 0.5f) * 100f;
     }
 }
 }

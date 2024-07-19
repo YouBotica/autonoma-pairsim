@@ -402,7 +402,7 @@ public class CarController : MonoBehaviour
         brakeDelaySec = 0.04, 
         maxBrakeKpa = 6000.0, 
         // brakeKpaToNm = 1.0, //configured in Vehicle Setup (Brake Constant)
-        brakeBias = 0.54,
+        brakeBias = 0.50, //AV21 default was 0.54
         brakeBandwidth = 5.0, 
         // brakeRate = 180000.0  //dependent variable
     };

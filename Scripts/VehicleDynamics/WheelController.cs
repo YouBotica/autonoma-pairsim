@@ -82,7 +82,8 @@ public class WheelController : MonoBehaviour
             wheelInertia = axleTyreParams.wheelInertia + 0.5f*gr*gr*carController.vehicleParams.engineInertia;
             brakeBias = 1f-carController.vehicleParams.brakeBias;
         }
-        omegaDot = (driveTorque - 0.5f*carController.TBrake*brakeBias*Mathf.Sign(omega)
+        // omegaDot = (driveTorque - 0.5f*carController.TBrake*brakeBias*Mathf.Sign(omega)
+        omegaDot = (driveTorque - carController.TBrake*brakeBias*Mathf.Sign(omega)
                            - Fx*axleTyreParams.tyreRadius
                            - axleTyreParams.rollResForce*axleTyreParams.tyreRadius*Mathf.Sign(omega) )/wheelInertia;
 
