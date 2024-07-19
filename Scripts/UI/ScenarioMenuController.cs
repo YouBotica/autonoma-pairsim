@@ -366,7 +366,7 @@ public class ScenarioMenuController : MonoBehaviour
             tmpVehSetup.FrontRollBarRate = 463593f;
             tmpVehSetup.RearRollBarRate = 358225f;
             tmpVehSetup.SteeringRatio = 15f;
-            tmpVehSetup.BrakeConstant = 1f;
+            tmpVehSetup.BrakeConstant = 0.55f; 
             tmpVehSetup.IsThermalTyre = true;
             tmpVehSetup.AmbientTemp = 20f;
             tmpVehSetup.TrackTemp = 25f;
@@ -383,7 +383,7 @@ public class ScenarioMenuController : MonoBehaviour
             tmpVehSetup.FrontRollBarRate = 463593f;
             tmpVehSetup.RearRollBarRate = 0f;
             tmpVehSetup.SteeringRatio = 19.5f;
-            tmpVehSetup.BrakeConstant = 1f;
+            tmpVehSetup.BrakeConstant = 0.55f;
             tmpVehSetup.IsThermalTyre = true;
             tmpVehSetup.AmbientTemp = 20f;
             tmpVehSetup.TrackTemp = 25f;

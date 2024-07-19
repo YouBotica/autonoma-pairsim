@@ -1,5 +1,5 @@
 /* 
-Copyright 2023 Autonoma, Inc.
+Copyright 2024 Purdue AI Racing
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -75,17 +75,14 @@ public class VehicleInputSubscriber : MonoBehaviour
                 carController.gearDown = true;
             }
         });
-// BO_ 1406 dash_switches_cmd: 8 Vector__XXX
-//  SG_ driver_traction_aim_switch : 0|4@1+ (1,0) [0|0] "" Vector__XXX
-//  SG_ driver_traction_range_switch : 4|4@1+ (1,0) [0|0] "" Vector__XXX
-//  SG_ brake_bias_aim_switch : 8|4@1+ (1,0) [0|0] "" Vector__XXX
+
         canDashSwitchesCmdSubscriber = new CanSubscriber("dash_switches_cmd", qosSettings, data_values => {
-            Debug.Log("Received Can Dash Switches msg");
+            // Debug.Log("Default Brake Bias: " + carController.vehicleParams.brakeBias );
             if (carController.brakeCmd == 0f){
                 carController.vehicleParams.brakeBias = 0.5f;
                 if(!(data_values == null))
                 {
-                    Debug.Log("Dash Switches Cmd Message recieved: " + (0.5f + (float)data_values[2] / 100f));
+                    // Debug.Log("Dash Switches Cmd Message recieved: " + (0.5f + (float)data_values[2] / 100f));
                     carController.vehicleParams.brakeBias = 0.5f + (float)data_values[2] / 100f;
                 }
             }

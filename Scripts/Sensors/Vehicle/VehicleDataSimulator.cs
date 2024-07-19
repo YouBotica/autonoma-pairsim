@@ -130,8 +130,8 @@ public class VehicleDataSimulator : MonoBehaviour
         mode_switch_state = false;
         accel_pedal_input = carController.throttleCmd * 100;
         accel_pedal_output = carController.thrApplied *100;
-        front_brake_pressure = carController.brakeApplied *   carController.vehicleParams.brakeBias;  // TODO: check this
-        rear_brake_pressure = carController.brakeApplied * (1-  carController.vehicleParams.brakeBias);
+        front_brake_pressure = 2.0f * carController.brakeApplied *   carController.vehicleParams.brakeBias;  //FIXME
+        rear_brake_pressure = 2.0f * carController.brakeApplied * (1-  carController.vehicleParams.brakeBias);
         steering_wheel_angle = carController.steerAngleApplied*  carController.vehicleParams.steeringRatio;
         steering_wheel_angle_cmd = carController.steerAngleCmd*  carController.vehicleParams.steeringRatio;
         steering_wheel_torque = 0.0f;
