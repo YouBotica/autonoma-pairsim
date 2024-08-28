@@ -24,6 +24,7 @@ public class ImuPublisher : Publisher<Imu>
     public string modifiedTopicName = "/imu/data";
     public float modifiedFrequency = 100f;
     public string modifiedFrameId = "gps_bottom";
+    public float orientation_covariance = 0.0001f;
     public float linear_acceleration_covariance = 0.0009f;
     public float angular_velocity_covariance = 0.00035f;
     public void getPublisherParams()
@@ -36,6 +37,10 @@ public class ImuPublisher : Publisher<Imu>
 
     protected override void Start()
     {
+        linear_acceleration_covariance = GameManager.Instance.Settings.mySensorSet.linearAccelCovariance;
+        angular_velocity_covariance = GameManager.Instance.Settings.mySensorSet.angularVelocityCovariance;
+        orientation_covariance = GameManager.Instance.Settings.mySensorSet.orientationCovariance;
+        
         getPublisherParams();
         this.rosNamespace = modifiedRosNamespace;
         this.topicName = modifiedTopicName;
@@ -118,6 +123,10 @@ public class ImuPublisher : Publisher<Imu>
         msg.Orientation.Y  = quat.y;
         msg.Orientation.Z = quat.z;
         msg.Orientation.W = quat.w;
+        msg.Orientation_covariance[0] = orientation_covariance;
+        msg.Orientation_covariance[4] = orientation_covariance;
+        msg.Orientation_covariance[8] = orientation_covariance;
+
     }
 }
 }

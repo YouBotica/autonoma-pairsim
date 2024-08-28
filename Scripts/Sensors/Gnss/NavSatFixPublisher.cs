@@ -1,5 +1,5 @@
 /* 
-Copyright 2023 Autonoma, Inc.
+Copyright 2024 Purdue AI Racing
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -24,12 +24,16 @@ public class NavSatFixPublisher : Publisher<NavSatFix>
     public string modifiedTopicName = "/fix";
     public float modifiedFrequency = 100f;
     public string modifiedFrameId = "gps_bottom_ant1";
+    public float position_covariance = 0.0001f;
+
     public void getPublisherParams()
     {
         // get things from sensor assigned by ui to the sensor
     }
     protected override void Start()
     {
+        position_covariance = GameManager.Instance.Settings.mySensorSet.positionCovariance;
+
         getPublisherParams();
         this.rosNamespace = modifiedRosNamespace;
         this.topicName = modifiedTopicName;
@@ -50,6 +54,10 @@ public class NavSatFixPublisher : Publisher<NavSatFix>
         msg.Altitude = gnssSim.height;
 
         msg.Position_covariance_type = 2;
+
+        msg.Position_covariance[0] = position_covariance;
+        msg.Position_covariance[4] = position_covariance;
+        msg.Position_covariance[8] = position_covariance;
 
     }
 } // end of class

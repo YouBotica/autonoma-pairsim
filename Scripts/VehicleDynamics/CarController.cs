@@ -40,6 +40,7 @@ public class CarController : MonoBehaviour
     public Vector3 frontDownforce,frontDownforceGlobal;
     public Vector3 rearDownforce,rearDownforceGlobal;
     public Vector3 dragForce,dragForceGlobal;
+    public Vector3 bankingForce, bankingForceGlobal;
     public Vector3 V;
     public bool physicalActuator = false;
     public VehicleState vehicleState;
@@ -185,7 +186,22 @@ public class CarController : MonoBehaviour
         carBody.AddForceAtPosition(rearDownforceGlobal, transform.TransformPoint(vehicleParams.rearDownforcePos));
         carBody.AddForceAtPosition(dragForceGlobal, transform.TransformPoint(vehicleParams.dragForcePos));
     } 
-    
+
+    void applyBankingForces() //SHOULD ONLY BE USED ON MAPS WITHOUT accurate BANKING 
+    {
+        // float theta = 0.16057f; //9.2 degrees banking
+        float theta = 0f;
+        float g = 9.81f;
+        // float mu = 0.7f;
+        float forceApplied = (float)(-1.0f * (vehicleParams.mass * g * Math.Sin(theta))); // - (vehicleParams.mass * g * mu * Math.Cos(theta))); //force needing to simulate banking
+        bankingForce.x = forceApplied; //applied in left lateral direction to car's motion
+        bankingForceGlobal = transform.TransformDirection(bankingForce); //transform to global frame
+        if( GameManager.Instance.Settings.myTrackParams.TrackName.Equals("IMS")){
+            // Debug.Log("Applying Banking Force: " + forceApplied);
+            carBody.AddForceAtPosition(bankingForceGlobal, transform.TransformPoint(vehicleParams.centerOfMass));
+        }
+    } 
+
     void Start()
     {
         //Gaussian Noise Simulators
@@ -282,6 +298,7 @@ public class CarController : MonoBehaviour
         calcBrakeTorque();
         calcEngineTorque();
         applyAeroForces();
+        // applyBankingForces();
     }
 
     public float GetSpeed()

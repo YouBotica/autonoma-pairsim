@@ -164,6 +164,13 @@ public class SensorSet
     public float gyroMean;
     public float gyroVariance;
     public int gyroSeed;
+    
+    public float linearAccelCovariance;
+    public float angularVelocityCovariance;
+    public float poseCovariance;
+    public float twistCovariance;
+    public float orientationCovariance;
+    public float positionCovariance;
 
 
     public SensorSet()

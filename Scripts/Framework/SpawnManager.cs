@@ -28,6 +28,7 @@ public class SpawnManager : MonoBehaviour
     public GameObject npc2VehiclePrefab;
     public GameObject kentuckyPrefab;
     public GameObject imsPrefab;
+    public GameObject imsBankedPrefab;
     public Material[] materials;
     public RaceControlMenuController raceControlMenu;
     private TrackParams trackParams;
@@ -108,7 +109,13 @@ public class SpawnManager : MonoBehaviour
                 dy = 0f;
                 dz = 0f;
 
-            }  
+            }
+            else if (trackName.Equals("IMS (banked).prefab")){
+                dx = 17f;
+                dy = 0f;
+                dz = 0f;
+
+            }    
             float newX = spawnPosition.x + dx;
             float newY = spawnPosition.y + dy; 
             float newZ = spawnPosition.z + dz;
@@ -335,6 +342,12 @@ public class SpawnManager : MonoBehaviour
                 dy = 0f;
                 dz = 0f;
 
+            } 
+            else if (trackName.Equals("IMS (banked).prefab")){
+                dx = 17f;
+                dy = 0f;
+                dz = 0f;
+
             }   
             float newX = spawnPosition.x + dx;
             float newY = spawnPosition.y + dy; 
@@ -406,6 +419,12 @@ public class SpawnManager : MonoBehaviour
                 dz = 0f;
 
             }   
+            else if (trackName.Equals("IMS (banked).prefab")){
+                dx = 17f;
+                dy = 0f;
+                dz = 0f;
+
+            } 
             float newX = spawnPosition.x + dx;
             float newY = spawnPosition.y + dy; 
             float newZ = spawnPosition.z + dz;
@@ -454,7 +473,7 @@ public class SpawnManager : MonoBehaviour
         string bundleName;
 
         string trackName;
-        if(GameManager.Instance.Settings.myTrackParams.TrackName == "Kentucky Speedway" || GameManager.Instance.Settings.myTrackParams.TrackName == "IMS")
+        if(GameManager.Instance.Settings.myTrackParams.TrackName == "Kentucky Speedway" || GameManager.Instance.Settings.myTrackParams.TrackName == "IMS" || GameManager.Instance.Settings.myTrackParams.TrackName == "IMS (banked)")
         {
             trackName = "LVMS.prefab"; //just use LVMS prefab as a placeholder for custom tracks not in v2 unity package
         }
@@ -523,17 +542,20 @@ public class SpawnManager : MonoBehaviour
                 }
                 else if(GameManager.Instance.Settings.myTrackParams.TrackName == "IMS")
                 {
-                    // Vector3 position = new Vector3(-27f, -0.5f, 977f); //for 90 deg rotation
-                    // Quaternion rotation = Quaternion.Euler(0f, -90f, 0f); 
-
-                    // Vector3 position = new Vector3(-35f, -0.5f, 977f);
-                    // Quaternion rotation = Quaternion.Euler(0f, -90.5f, 0f); 
-
                     Vector3 position = new Vector3(-43.5f, -0.5f, 977f);
                     Quaternion rotation = Quaternion.Euler(0f, -91f, 0f); 
 
                     Vector3 scale = new Vector3(1f, 1f, 1f); 
                     GameObject instantiatedTrack = Instantiate(imsPrefab, position, rotation); //for new prefabs
+                    instantiatedTrack.transform.localScale = scale;
+                }
+                else if(GameManager.Instance.Settings.myTrackParams.TrackName == "IMS (banked)")
+                {
+                    Vector3 position = new Vector3(-43.5f, -0.5f, 977f);
+                    Quaternion rotation = Quaternion.Euler(0f, -91f, 0f); 
+
+                    Vector3 scale = new Vector3(1f, 1f, 1f); 
+                    GameObject instantiatedTrack = Instantiate(imsBankedPrefab, position, rotation); //for new prefabs
                     instantiatedTrack.transform.localScale = scale;
                 }
                 else{

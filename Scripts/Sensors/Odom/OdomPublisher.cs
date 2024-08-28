@@ -34,6 +34,8 @@ namespace Autonoma
         private double longitude;
         private double utmX;
         private double utmY;
+        public float pose_covariance = 0.0f;
+        public float twist_covariance = 0.0f;
         
         public void getPublisherParams()
         {
@@ -47,6 +49,9 @@ namespace Autonoma
 
         protected override void Start()
         {
+            pose_covariance = GameManager.Instance.Settings.mySensorSet.poseCovariance;
+            twist_covariance = GameManager.Instance.Settings.mySensorSet.twistCovariance;
+
             getPublisherParams();
             this.rosNamespace = modifiedRosNamespace;
             this.topicName = modifiedTopicName;
@@ -150,6 +155,20 @@ namespace Autonoma
             msg.Twist.Twist.Angular.Y = imuSim.imuGyro.y + gyroNoiseY; 
             msg.Twist.Twist.Angular.Z = imuSim.imuGyro.z + gyroNoiseZ; 
 
+            //Covariance
+            msg.Pose.Covariance[0] = pose_covariance;
+            msg.Pose.Covariance[7] = pose_covariance;
+            msg.Pose.Covariance[14] = pose_covariance;
+            msg.Pose.Covariance[21] = pose_covariance;
+            msg.Pose.Covariance[28] = pose_covariance;
+            msg.Pose.Covariance[35] = pose_covariance;
+
+            msg.Twist.Covariance[0] = twist_covariance;
+            msg.Twist.Covariance[7] = twist_covariance;
+            msg.Twist.Covariance[14] = twist_covariance;
+            msg.Twist.Covariance[21] = twist_covariance;
+            msg.Twist.Covariance[28] = twist_covariance;
+            msg.Twist.Covariance[35] = twist_covariance;
         }
 
     }

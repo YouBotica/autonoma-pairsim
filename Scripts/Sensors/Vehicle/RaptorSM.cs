@@ -27,7 +27,7 @@ public class RaptorSM : MonoBehaviour
 	void Start()
 	{
 		hot_start = GameManager.Instance.Settings.myScenarioObj.HotStart;
-		Debug.Log("Hot Start: " + hot_start);
+		// Debug.Log("Hot Start: " + hot_start);
 	}
 	void Update()
 	{

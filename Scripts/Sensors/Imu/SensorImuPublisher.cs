@@ -24,7 +24,7 @@ public class SensorImuPublisher : Publisher<Imu>
     public string modifiedTopicName = "/imu/data_raw";
     public float modifiedFrequency = 100f;
     public string modifiedFrameId = "gps_bottom_imu";
-    public float linear_acceleration_covariance = 0.0009f;
+    public float linear_acceleration_covariance = 0.0009f; //will be overriden in Start()
     public float angular_velocity_covariance = 0.00035f;
     public void getPublisherParams()
     {
@@ -35,6 +35,9 @@ public class SensorImuPublisher : Publisher<Imu>
 
     protected override void Start()
     {
+        linear_acceleration_covariance = GameManager.Instance.Settings.mySensorSet.linearAccelCovariance;
+        angular_velocity_covariance = GameManager.Instance.Settings.mySensorSet.angularVelocityCovariance;
+
         getPublisherParams();
         this.rosNamespace = modifiedRosNamespace;
         this.topicName = modifiedTopicName;
