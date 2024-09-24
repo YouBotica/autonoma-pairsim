@@ -55,6 +55,8 @@ public class SimUIManager : BaseUIManager
     
     public override void RestartScenarioPressed()
     {
+        // print log
+        Debug.Log("Restarting scenario...");
         GameManager.Instance.ChangeStateTo(GameManager.SimulationState.RESTART);
     }
 

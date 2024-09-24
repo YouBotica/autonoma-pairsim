@@ -264,5 +264,16 @@ namespace AWSIM
             Object.DestroyImmediate(targetEntity.gameObject);
             entities.Remove(targetEntity);
         }
+
+        public void Restart(string uniqueId)
+        {
+            // Restart the simulation
+            Debug.Log("Restarting simulation...");
+            foreach (var entity in entities)
+            {
+                Object.DestroyImmediate(entity.gameObject);
+            }
+            entities.Clear();
+        }
     }
 }

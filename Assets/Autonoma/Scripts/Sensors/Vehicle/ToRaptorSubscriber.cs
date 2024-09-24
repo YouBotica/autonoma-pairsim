@@ -17,21 +17,28 @@ using UnityEngine;
 using ROS2;
 using AWSIM;
 using autonoma_msgs.msg;
+using std_msgs.msg;
 
 namespace Autonoma
 {
 public class ToRaptorSubscriber : MonoBehaviour
 {
     public string toRaptorTopic = "/to_raptor";
+
+    public string ResetSimulatorTopic = "/simulator/reset";
     public QoSSettings qosSettings = new QoSSettings();
     public RaptorSM sm;
     ISubscription<ToRaptor> toRaptorSubscriber;
-
     CanSubscriber canToRaptorSubscriber;
+
+    ISubscription<Bool> resetSimulatorSubscriber;
+
 
     void Start()
     {
         var qos = qosSettings.GetQoSProfile();
+
+        Debug.Log("Creating subscription to " + toRaptorTopic);
 
         toRaptorSubscriber = SimulatorROS2Node.CreateSubscription<ToRaptor>(toRaptorTopic, msg =>
             {
@@ -41,14 +48,26 @@ public class ToRaptorSubscriber : MonoBehaviour
         canToRaptorSubscriber = new CanSubscriber("ct_report", qosSettings, data_values => {
             sm.current_ct = (int)data_values[2];
         });
+
+        resetSimulatorSubscriber = SimulatorROS2Node.CreateSubscription<Bool>(ResetSimulatorTopic, msg =>
+            {
+                Debug.Log("Got reset message: " + msg.Data);
+                ResetSimulation(msg);
+            }, qos);
     }
     void OnDestroy()
     {
         SimulatorROS2Node.RemoveSubscription<ToRaptor>(toRaptorSubscriber);
+        SimulatorROS2Node.RemoveSubscription<Bool>(resetSimulatorSubscriber);
     }
     void UpdateToRaptor(ToRaptor msg)
     {
         sm.current_ct = msg.Ct_state;
+    }
+
+    void ResetSimulation(Bool msg)
+    {
+        Debug.Log("Got reset message: " + msg.Data);
     }
 }
 }
