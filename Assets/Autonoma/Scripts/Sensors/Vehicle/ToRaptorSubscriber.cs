@@ -19,6 +19,7 @@ using AWSIM;
 using autonoma_msgs.msg;
 using std_msgs.msg;
 
+
 namespace Autonoma
 {
 public class ToRaptorSubscriber : MonoBehaviour
@@ -68,6 +69,9 @@ public class ToRaptorSubscriber : MonoBehaviour
     void ResetSimulation(Bool msg)
     {
         Debug.Log("Got reset message: " + msg.Data);
+        GameManager.Instance.ChangeStateTo(GameManager.SimulationState.RESTART);
+        // UIManager = FindObjectOfType<SimUIManager>();
+        // UIManager.Instance.ChangeStateTo(GameManager.SimulationState.RESTART);
     }
 }
 }
